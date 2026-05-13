@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LABLeads — design canvas (v3.1 ↔ v4 IdeaNET)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f2ea; font-family: 'Inter', system-ui, sans-serif; }
+  .ab-iframe {
+    width: 100%; height: 100%; border: 0; display: block; background: #faf6ee;
+  }
+  .ab-note {
+    font-family: 'Fraunces', serif; font-weight: 350; font-size: 14px; line-height: 1.55;
+    color: #1c1916;
+    padding: 22px 26px;
+    background: #faf6ee;
+    border: 1px solid #e6dfce;
+    border-radius: 4px;
+    width: 100%; height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    text-wrap: pretty;
+  }
+  .ab-note h3 {
+    font-family: 'Fraunces', serif; font-weight: 380; font-size: 22px;
+    margin: 0 0 8px; letter-spacing: -0.01em; line-height: 1.1;
+    font-variation-settings: "SOFT" 30;
+  }
+  .ab-note .pre {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: #8a7f6c;
+    margin-bottom: 10px;
+  }
+  .ab-note .pre .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #c8552d;
+    margin-right: 8px; vertical-align: middle; box-shadow: 0 0 0 3px rgba(200,85,45,0.15);
+  }
+  .ab-note p { margin: 0 0 10px; }
+  .ab-note ul { padding-left: 18px; margin: 8px 0 12px; }
+  .ab-note li { margin: 4px 0; }
+  .ab-note .open-btn {
+    display: inline-block; margin-top: 8px;
+    background: #1c1916; color: #faf6ee;
+    text-decoration: none; padding: 8px 14px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .ab-note .open-btn:hover { background: #c8552d; }
+  .ab-note .dim { color: #4d4639; }
+  .ab-note .accent { color: #c8552d; font-style: italic; }
+</style>
+</head>
+<body>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+// Iframe artboard helper — wraps a self-contained HTML file
+function Frame({ src }) {
+  return <iframe className="ab-iframe" src={src} title={src} loading="lazy" />;
+}
+
+function Notes({ children }) {
+  return <div className="ab-note">{children}</div>;
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+
+      <DCSection id="overview" title="LABLeads — field study" subtitle="A community of practice, rendered two different ways">
+        <DCArtboard id="brief" label="00 · The brief" width={420} height={680}>
+          <Notes>
+            <div className="pre"><span className="dot"></span>Field study · iteration 02 → 03</div>
+            <h3>From atoms to ideas.</h3>
+            <p className="dim">v3.1 rendered the LABLeads community as a stable atomic configuration — lab leads at the core, creators in shell, listeners in orbit. Pause-to-query surfaced 13 baked insight themes.</p>
+            <p className="dim">v4 — <em>IdeaNET</em> — keeps the same lab-notebook DNA but flips the surface: a working researcher's console powered by the <span className="accent">real (anonymised) transcripts</span> of three conversations Stephen held with nine voices across eight countries.</p>
+            <p className="dim">Ask any question. Tap a theme. Cycle through verbatim voices. Copy anything. The atomic motif lingers as ambient background — still here, just no longer the medium.</p>
+            <a className="open-btn" href="LABLeads IdeaNET.html" target="_blank">Open v4 IdeaNET →</a>
+          </Notes>
+        </DCArtboard>
+
+        <DCArtboard id="v31" label="01 · v3.1 · Atomic configuration" width={1280} height={760}>
+          <Frame src="LABLeads.html" />
+        </DCArtboard>
+
+        <DCArtboard id="v4" label="02 · v4 · IdeaNET console" width={1280} height={760}>
+          <Frame src="LABLeads IdeaNET.html" />
+        </DCArtboard>
+
+      </DCSection>
+
+      <DCSection id="diff" title="What changed in v4" subtitle="And what we kept from v3.1">
+        <DCArtboard id="kept" label="Kept · the lab-notebook DNA" width={420} height={520}>
+          <Notes>
+            <div className="pre"><span className="dot"></span>Carried forward</div>
+            <h3>What stayed.</h3>
+            <ul className="dim">
+              <li>Fraunces serif + JetBrains Mono + cream paper palette.</li>
+              <li>Three palettes — lab cream, dusk, midnight.</li>
+              <li>Tweaks panel for live console controls.</li>
+              <li>The terracotta lead atoms — but now ambient backdrop, not foreground.</li>
+              <li>Lab notebook dot grid and warm rule lines.</li>
+            </ul>
+          </Notes>
+        </DCArtboard>
+
+        <DCArtboard id="new" label="New · the IdeaNET console" width={420} height={520}>
+          <Notes>
+            <div className="pre"><span className="dot"></span>Bold reframe</div>
+            <h3>What's new.</h3>
+            <ul className="dim">
+              <li><strong>Real transcripts</strong> — three anonymised sessions, ~66kb of dialogue, are the actual source of every answer.</li>
+              <li><strong>LLM-powered Q&amp;A</strong> — type a question, get a 200-word synthesis grounded in verbatim pull-quotes.</li>
+              <li><strong>"Show me the big picture"</strong> — instant, pre-baked synthesis card with six pillars.</li>
+              <li><strong>14 theme chips</strong> — one tap to ask about lab leads, briefs, workshops, privacy, escalation…</li>
+              <li><strong>Copy everywhere</strong> — whole answers, individual quotes, the big picture. All formatted for paste-into-doc.</li>
+              <li><strong>Mobile-first</strong> — single-column flow, sticky ask input, horizontal theme chips.</li>
+              <li><strong>Voices panel</strong> — auto-cycling verbatim quotes from the real conversations.</li>
+            </ul>
+          </Notes>
+        </DCArtboard>
+
+        <DCArtboard id="next" label="Next · what to test" width={420} height={520}>
+          <Notes>
+            <div className="pre"><span className="dot"></span>Open questions</div>
+            <h3>Next loop.</h3>
+            <ul className="dim">
+              <li>Does the LLM synthesis stay <em>specific to these conversations</em>, or does it drift into generic community-building advice? (Built guardrails — worth pressure-testing with real questions.)</li>
+              <li>Should the theme list expand as more transcripts are added, or stay curated at ~14 to avoid choice paralysis?</li>
+              <li>Is the atomic ambient backdrop a continuity gesture or a distraction? Tweaks panel lets you switch it off.</li>
+              <li>Worth a third reframe? A timeline view of when each idea surfaced, or a constellation map by region?</li>
+            </ul>
+          </Notes>
+        </DCArtboard>
+
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+
+</body>
+</html>

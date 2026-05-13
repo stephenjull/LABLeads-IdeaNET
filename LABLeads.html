@@ -1,0 +1,1840 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LABLeads — A Stable Configuration</title>
+<meta name="description" content="A living molecular model of the LABLeads community of practice — a lab notebook of creators in orbit." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Lab cream palette */
+    --paper:      #faf6ee;
+    --paper-2:    #f3ede0;
+    --paper-rule: #e6dfce;
+    --ink:        #1c1916;
+    --ink-2:      #4d4639;
+    --ink-3:      #8a7f6c;
+    --ink-4:      #c5b99f;
+    --lead:       #c8552d;   /* lab lead — terracotta */
+    --lead-soft:  #e89c7a;
+    --active:     #2a3d4a;   /* active creator — slate */
+    --active-soft:#6e8290;
+    --quiet:      #a89884;   /* listener — warm taupe */
+    --pulse:      #d97757;
+    --rule-strong: rgba(28,25,22,0.10);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--paper); color: var(--ink); font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  body {
+    background:
+      radial-gradient(ellipse at 18% 8%, rgba(200,85,45,0.04), transparent 55%),
+      radial-gradient(ellipse at 88% 92%, rgba(42,61,74,0.03), transparent 50%),
+      var(--paper);
+  }
+  /* Lab notebook dot grid */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background-image: radial-gradient(circle, rgba(28,25,22,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: 0 0;
+    mask-image: radial-gradient(ellipse at center, black 60%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 95%);
+  }
+  /* horizontal rule like notebook margin */
+  body::after {
+    content: ""; position: fixed; left: 90px; top: 0; bottom: 0; width: 1px; pointer-events: none; z-index: 1;
+    background: linear-gradient(180deg, transparent 0, var(--rule-strong) 8%, var(--rule-strong) 92%, transparent 100%);
+  }
+  @media (max-width: 900px) { body::after { display: none; } }
+
+  #stage { position: fixed; inset: 0; z-index: 2; }
+  #universe { display: block; width: 100%; height: 100%; cursor: grab; }
+  #universe.dragging { cursor: grabbing; }
+  #universe.hovering { cursor: pointer; }
+
+  /* HEADER — lab notebook style */
+  .hdr {
+    position: fixed; top: 0; left: 0; right: 0; padding: 28px 36px 18px 120px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    pointer-events: none; z-index: 12;
+  }
+  .brand { pointer-events: auto; }
+  .brand .pretitle {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .brand .pretitle .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--lead); margin-right: 8px; vertical-align: middle; box-shadow: 0 0 0 3px rgba(200,85,45,0.15); }
+  .brand .mark {
+    font-family: 'Fraunces', serif; font-weight: 380; font-size: 30px; letter-spacing: -0.02em;
+    color: var(--ink); line-height: 1.05; display: flex; align-items: baseline; gap: 0.3ch;
+    font-variation-settings: "SOFT" 30;
+  }
+  .brand .mark em { font-style: italic; color: var(--lead); font-weight: 400; }
+  .brand .sub {
+    margin-top: 10px; font-size: 13px; color: var(--ink-2); line-height: 1.5;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350;
+    max-width: 44ch;
+  }
+  .meta { pointer-events: auto; text-align: right; }
+  .meta .stats { display: flex; gap: 22px; }
+  .stat { text-align: right; }
+  .stat .v { font-family: 'Fraunces', serif; font-size: 30px; color: var(--ink); font-weight: 380; line-height: 1; letter-spacing: -0.02em; }
+  .stat .v em { color: var(--lead); font-style: normal; }
+  .stat .v.cy em { color: var(--active); }
+  .stat .l { margin-top: 6px; font-size: 10px; color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+  .figcap {
+    position: fixed; left: 120px; bottom: 28px; z-index: 12; pointer-events: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    color: var(--ink-3); letter-spacing: 0.06em;
+  }
+  .figcap b { color: var(--ink); font-weight: 500; margin-right: 6px; }
+
+  /* LEGEND */
+  .legend {
+    position: fixed; bottom: 28px; right: 28px; z-index: 12;
+    display: flex; gap: 20px; align-items: flex-end; pointer-events: auto;
+    flex-direction: column; align-items: flex-end;
+  }
+  .legend .col { display: flex; gap: 18px; }
+  .legend .item { display: flex; align-items: center; gap: 9px;
+    font-size: 11.5px; color: var(--ink-2); font-family: 'Inter', sans-serif; font-weight: 400; }
+  .legend .label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+  .legend .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend .dot.lead { background: var(--lead); box-shadow: 0 0 0 4px rgba(200,85,45,0.10); }
+  .legend .dot.active { width: 9px; height: 9px; background: var(--active); }
+  .legend .dot.quiet { width: 6px; height: 6px; background: var(--quiet); }
+  .legend .bond { width: 22px; height: 10px; position: relative; }
+  .legend .bond.single::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--ink-2); }
+  .legend .bond.double::before { content: ""; position: absolute; left: 0; right: 0; top: 35%; height: 1px; background: var(--ink-2); }
+  .legend .bond.double::after  { content: ""; position: absolute; left: 0; right: 0; top: 65%; height: 1px; background: var(--ink-2); }
+  .legend .bond.dotted { background-image: linear-gradient(to right, var(--ink-2) 50%, transparent 50%); background-size: 5px 1px; background-position: left center; background-repeat: repeat-x; height: 1px; top: 50%; transform: translateY(-50%); margin-top: 4px; }
+
+  /* DETAIL PANEL */
+  .detail {
+    position: fixed; right: 28px; top: 110px; width: 312px; padding: 22px 24px 20px; z-index: 13;
+    background: var(--paper);
+    border: 1px solid var(--paper-rule);
+    box-shadow:
+      0 1px 0 var(--paper-rule),
+      0 18px 40px -22px rgba(28,25,22,0.18);
+    border-radius: 4px;
+    opacity: 0; pointer-events: none; transform: translateY(4px);
+    transition: opacity 240ms ease, transform 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .detail.shown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .detail::before {
+    content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 3px;
+    background: var(--lead);
+  }
+  .detail.k-active::before { background: var(--active); }
+  .detail.k-quiet::before  { background: var(--quiet); }
+  .detail .role { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .detail .role .glyph { font-family: 'Fraunces', serif; font-style: normal; font-size: 13px; color: var(--lead); letter-spacing: 0; text-transform: none; }
+  .detail.k-active .role .glyph { color: var(--active); }
+  .detail.k-quiet  .role .glyph { color: var(--quiet); }
+  .detail h3 {
+    font-family: 'Fraunces', serif; font-weight: 380; font-size: 22px;
+    margin: 8px 0 4px; color: var(--ink); letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 30;
+  }
+  .detail .where { font-size: 12.5px; color: var(--ink-2); margin-bottom: 14px; font-family: 'Inter', sans-serif; }
+  .detail .quote {
+    font-size: 14px; line-height: 1.5; color: var(--ink); padding: 10px 0 10px 14px;
+    border-left: 2px solid var(--lead); margin-bottom: 14px;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350;
+  }
+  .detail.k-active .quote { border-left-color: var(--active); }
+  .detail.k-quiet  .quote { border-left-color: var(--quiet); }
+  .detail .meta-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 6px; padding-top: 14px; border-top: 1px dashed var(--paper-rule); }
+  .detail .meta-row .b { font-size: 9.5px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.10em; text-transform: uppercase; }
+  .detail .meta-row .b strong { display: block; font-family: 'Fraunces', serif; font-size: 17px; color: var(--ink); font-weight: 380; margin-top: 4px; letter-spacing: 0; text-transform: none; line-height: 1.1; }
+  .detail .close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--ink-3); cursor: pointer; font-size: 18px; line-height: 1; padding: 4px; }
+  .detail .close:hover { color: var(--ink); }
+
+  /* FLOATING QUOTES — chemistry callouts */
+  .floats { position: fixed; inset: 0; pointer-events: none; z-index: 11; overflow: hidden; }
+  .float-quote {
+    position: absolute;
+    max-width: 240px;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350;
+    font-size: 14px; line-height: 1.4; color: var(--ink);
+    background: rgba(250,246,238,0.92);
+    backdrop-filter: blur(6px);
+    padding: 8px 12px;
+    border-left: 2px solid var(--lead);
+    box-shadow: 0 6px 18px -10px rgba(28,25,22,0.22);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 320ms ease, transform 380ms cubic-bezier(.2,.8,.2,1);
+  }
+  .float-quote.lead   { border-left-color: var(--lead); }
+  .float-quote.active { border-left-color: var(--active); }
+  .float-quote.quiet  { border-left-color: var(--quiet); }
+  .float-quote.shown  { opacity: 1; transform: translateY(0); }
+
+  /* AMBIENT note labels for shells */
+  .shell-label {
+    position: absolute; pointer-events: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--paper); padding: 2px 6px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* TWEAKS PANEL */
+  .tweaks-toggle {
+    position: fixed; top: 28px; right: 28px; z-index: 14;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--paper); border: 1px solid var(--paper-rule);
+    color: var(--ink-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 200ms ease, color 200ms ease;
+    box-shadow: 0 2px 6px -3px rgba(28,25,22,0.15);
+  }
+  .tweaks-toggle:hover { color: var(--lead); }
+  .tweaks-toggle.open { color: var(--lead); transform: rotate(45deg); }
+  .meta { padding-right: 60px; }
+
+  .tweaks {
+    position: fixed; top: 78px; right: 28px; z-index: 14;
+    width: 304px; padding: 20px 22px 16px;
+    background: var(--paper); border: 1px solid var(--paper-rule);
+    border-radius: 4px;
+    box-shadow:
+      0 1px 0 var(--paper-rule),
+      0 24px 48px -24px rgba(28,25,22,0.20);
+    opacity: 0; pointer-events: none; transform: translateY(4px);
+    transition: opacity 220ms ease, transform 240ms ease;
+    max-height: calc(100vh - 100px); overflow-y: auto;
+  }
+  .tweaks.shown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .tweaks h4 { font-family: 'Fraunces', serif; font-weight: 380; font-size: 19px; margin: 0 0 4px; letter-spacing: -0.01em; font-variation-settings: "SOFT" 30; }
+  .tweaks .tg { font-size: 10px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+  .tweaks .grp { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--paper-rule); }
+  .tweaks .grp:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .tweaks label { font-size: 10.5px; color: var(--ink-2); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; display: flex; justify-content: space-between; margin-bottom: 8px; text-transform: uppercase; }
+  .tweaks label .val { color: var(--lead); text-transform: none; letter-spacing: 0.02em; font-size: 11px; }
+  .tweaks input[type=range] { width: 100%; -webkit-appearance: none; background: transparent; margin: 0 0 14px; }
+  .tweaks input[type=range]::-webkit-slider-runnable-track { height: 1px; background: var(--paper-rule); }
+  .tweaks input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--lead); margin-top: -6px; cursor: grab; box-shadow: 0 0 0 3px var(--paper); }
+  .tweaks input[type=range]::-moz-range-track { height: 1px; background: var(--paper-rule); }
+  .tweaks input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--lead); border: none; cursor: grab; box-shadow: 0 0 0 3px var(--paper); }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding: 0; background: transparent; border: 1px solid var(--paper-rule); border-radius: 3px; margin-bottom: 14px; overflow: hidden; }
+  .seg.two { grid-template-columns: repeat(2, 1fr); }
+  .seg button { background: none; border: none; padding: 8px 6px; font-size: 10.5px; color: var(--ink-2); cursor: pointer; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; transition: background 160ms; text-transform: uppercase; border-right: 1px solid var(--paper-rule); }
+  .seg button:last-child { border-right: none; }
+  .seg button:hover { color: var(--ink); background: var(--paper-2); }
+  .seg button.on { background: var(--ink); color: var(--paper); }
+  .swatches { display: flex; gap: 6px; margin-bottom: 14px; }
+  .swatches button { flex: 1; height: 32px; border-radius: 3px; border: 1px solid var(--paper-rule); cursor: pointer; padding: 0; position: relative; overflow: hidden; }
+  .swatches button.on { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .swatches button .row { position: absolute; inset: 0; display: flex; }
+  .swatches button .row span { flex: 1; }
+
+  .footer-credit {
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 9;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink-4);
+    letter-spacing: 0.16em; text-transform: uppercase; pointer-events: none;
+  }
+
+  /* COMMAND BAR (bottom center) — pause/play + search */
+  .cmd {
+    position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); z-index: 13;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--paper-rule); border-radius: 30px;
+    padding: 6px 8px 6px 6px;
+    box-shadow: 0 10px 28px -16px rgba(28,25,22,0.25);
+    transition: opacity 240ms ease, transform 280ms cubic-bezier(.2,.8,.2,1), border-color 280ms ease, box-shadow 280ms ease;
+  }
+  .cmd.paused {
+    border-color: var(--lead);
+  }
+  @keyframes cmd-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(200,85,45,0.10), 0 14px 32px -16px rgba(200,85,45,0.30); }
+    50%      { box-shadow: 0 0 0 7px rgba(200,85,45,0.06), 0 14px 32px -16px rgba(200,85,45,0.42); }
+  }
+  .cmd.paused { animation: cmd-pulse 2.6s ease-in-out infinite; }
+  .cmd.hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(12px); }
+  .cmd .pp {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 160ms;
+    flex-shrink: 0;
+  }
+  .cmd .pp:hover { background: var(--lead); }
+  .cmd .search {
+    width: 0; opacity: 0; pointer-events: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: width 280ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease 80ms;
+    overflow: hidden;
+  }
+  .cmd.paused .search { width: 380px; opacity: 1; pointer-events: auto; }
+  .cmd .search input {
+    flex: 1; min-width: 0;
+    background: transparent; border: none; outline: none;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350; font-size: 15px;
+    color: var(--ink); padding: 8px 4px 8px 10px;
+  }
+  .cmd .search input::placeholder { color: var(--lead); opacity: 0.75; }
+  .cmd .submit {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--lead); color: var(--paper);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 160ms, transform 160ms;
+  }
+  .cmd .submit:hover { transform: scale(1.06); }
+  .cmd .submit:disabled { background: var(--ink-4); cursor: not-allowed; transform: none; }
+  .cmd .hint {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0 12px 0 4px;
+    white-space: nowrap;
+  }
+  .cmd.paused .hint { display: none; }
+
+  /* INSIGHTS PANEL — slides up from bottom ~1/3 viewport */
+  .insights {
+    position: fixed; left: 50%; right: auto; bottom: 28px; transform: translateX(-50%) translateY(20px);
+    width: min(540px, calc(50vw - 40px));
+    max-height: calc(100vh - 140px);
+    background: var(--paper); border: 1px solid var(--paper-rule); border-radius: 6px;
+    padding: 22px 26px 20px; z-index: 13;
+    box-shadow: 0 1px 0 var(--paper-rule), 0 24px 60px -28px rgba(28,25,22,0.28);
+    opacity: 0; pointer-events: none;
+    transition: opacity 320ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+    overflow-y: auto;
+  }
+  .insights.shown { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+  .insights::before {
+    content: ""; position: absolute; left: 26px; right: 26px; top: 0; height: 3px; background: var(--lead);
+  }
+  .insights .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .insights .eyebrow .badge {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--lead);
+    margin-right: 8px; vertical-align: middle; box-shadow: 0 0 0 3px rgba(200,85,45,0.15);
+  }
+  .insights h3 {
+    font-family: 'Fraunces', serif; font-weight: 380; font-size: 26px;
+    margin: 8px 0 12px; color: var(--ink); letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 30;
+  }
+  .insights .body {
+    font-family: 'Fraunces', serif; font-weight: 350; font-size: 15.5px; line-height: 1.55;
+    color: var(--ink); text-wrap: pretty;
+    border-left: 2px solid var(--lead); padding-left: 14px;
+  }
+  .insights .body p { margin: 0; }
+  .insights .body p + p { margin-top: 10px; }
+  .insights .body em { font-style: italic; }
+  .insights.expanded { max-height: calc(100vh - 140px); }
+  /* split-screen (desktop): dock insights right so the atomic config stays visible on the left */
+  .insights.shown {
+    left: auto; right: 28px; bottom: 28px;
+    transform: translateY(0);
+  }
+  .insights {
+    transition: opacity 320ms ease, transform 420ms cubic-bezier(.2,.8,.2,1),
+                right 420ms cubic-bezier(.2,.8,.2,1),
+                left 420ms cubic-bezier(.2,.8,.2,1),
+                top 420ms cubic-bezier(.2,.8,.2,1),
+                bottom 420ms cubic-bezier(.2,.8,.2,1),
+                width 420ms cubic-bezier(.2,.8,.2,1);
+  }
+
+  /* mobile / narrow viewport: split horizontally instead — insights on top half, atoms on bottom */
+  @media (max-width: 720px) {
+    .insights {
+      width: calc(100vw - 24px);
+      max-height: 48vh;
+    }
+    .insights.shown {
+      left: 12px; right: 12px; top: 12px; bottom: auto;
+      transform: translateY(0);
+      width: auto;
+    }
+    .insights.expanded { max-height: 55vh; }
+    /* push the pause/search bar below the insights panel when it's open */
+    body.insights-open .cmd {
+      bottom: 32px;
+    }
+    /* dim the area behind atoms slightly to reinforce the split */
+    body.insights-open #floats { display: none; }
+  }
+  .insights .empty {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350; font-size: 14.5px;
+    color: var(--ink-2); margin-top: 4px;
+  }
+  .insights .meta-row {
+    display: flex; gap: 18px; margin-top: 16px; padding-top: 14px;
+    border-top: 1px dashed var(--paper-rule); align-items: center;
+    flex-wrap: wrap;
+  }
+  .insights .src {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .insights .src strong { color: var(--ink); font-weight: 500; }
+  .insights .actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .insights .connect-btn {
+    background: var(--ink); color: var(--paper); border: none; cursor: pointer;
+    padding: 8px 14px; border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 160ms;
+  }
+  .insights .connect-btn:hover { background: var(--lead); }
+  .insights .connect-btn.on { background: var(--lead); }
+  .insights .connect-btn svg { width: 12px; height: 12px; }
+  .insights .ghost-btn {
+    background: none; color: var(--ink-2); border: 1px solid var(--paper-rule); cursor: pointer;
+    padding: 8px 14px; border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: color 160ms, border-color 160ms, background 160ms;
+  }
+  .insights .ghost-btn:hover { color: var(--ink); border-color: var(--ink); }
+  .insights .ghost-btn.copied { color: var(--lead); border-color: var(--lead); }
+  .insights .ghost-btn svg { width: 12px; height: 12px; }
+  .insights .close-btn {
+    background: none; border: 1px solid var(--paper-rule); color: var(--ink-3); cursor: pointer;
+    width: 30px; height: 30px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: color 160ms, border-color 160ms;
+  }
+  .insights .close-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+  @media (max-width: 720px) {
+    .hdr { padding: 18px 18px 12px; flex-direction: column; gap: 14px; }
+    .meta { text-align: left; padding-right: 0; }
+    .meta .stats { gap: 16px; }
+    .stat .v { font-size: 22px; }
+    .legend { right: auto; left: 12px; bottom: 60px; }
+    .detail { right: 12px; left: 12px; width: auto; top: auto; bottom: 80px; }
+    .figcap { left: 18px; bottom: 12px; }
+    body::before { background-size: 22px 22px; }
+    body::after { display: none; }
+    .tweaks-toggle { top: auto; bottom: 16px; right: 16px; }
+    .tweaks { top: auto; bottom: 64px; right: 12px; left: 12px; width: auto; }
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <canvas id="universe"></canvas>
+    <div class="floats" id="floats"></div>
+  </div>
+
+  <header class="hdr">
+    <div class="brand">
+      <div class="pretitle"><span class="dot"></span>Field study · Claude Lab · Iteration 02</div>
+      <div class="mark">LAB<em>Leads</em></div>
+      <div class="sub">A community of practice rendered as a stable atomic configuration — lab leads at the core, creators in shell, listeners in orbit. Bonds form when challenges, briefs, and shared problems travel between members.</div>
+    </div>
+    <div class="meta">
+      <div class="stats">
+        <div class="stat"><div class="v"><em id="s-leads">—</em></div><div class="l">Lab leads</div></div>
+        <div class="stat"><div class="v cy"><em id="s-creators">—</em></div><div class="l">Creators</div></div>
+        <div class="stat"><div class="v"><em id="s-bonds">—</em></div><div class="l">Bonds</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="figcap"><b>Fig. 01</b> Hover any atom · click to inspect · drag to perturb the orbit</div>
+
+  <aside class="legend">
+    <div>
+      <div class="label">Atoms</div>
+      <div class="col">
+        <div class="item"><span class="dot lead"></span>Lab lead</div>
+        <div class="item"><span class="dot active"></span>Creator</div>
+        <div class="item"><span class="dot quiet"></span>Listener</div>
+      </div>
+    </div>
+    <div>
+      <div class="label">Bonds</div>
+      <div class="col">
+        <div class="item"><span class="bond single"></span>Shared cohort</div>
+        <div class="item"><span class="bond double"></span>Collaboration</div>
+        <div class="item"><span class="bond dotted"></span>Intro / DM</div>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="detail" id="detail">
+    <button class="close" id="detail-close" aria-label="close">×</button>
+    <div class="role"><span class="glyph" id="d-glyph">Lb</span><span id="d-role"></span></div>
+    <h3 id="d-name">—</h3>
+    <div class="where" id="d-where">—</div>
+    <div class="quote" id="d-quote">—</div>
+    <div class="meta-row">
+      <div class="b">Bonds<strong id="d-bonds">—</strong></div>
+      <div class="b">Cadence<strong id="d-cadence">—</strong></div>
+      <div class="b">Working on<strong id="d-tag">—</strong></div>
+    </div>
+  </aside>
+
+  <div class="cmd" id="cmd">
+    <button class="pp" id="pp-btn" aria-label="pause / play">
+      <svg id="pp-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+    </button>
+    <span class="hint">Pause to query the lab</span>
+    <div class="search">
+      <input id="q-input" type="text" placeholder="Ask the lab — e.g. workshops, privacy, mentoring…" autocomplete="off" />
+      <button class="submit" id="q-submit" aria-label="submit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      </button>
+    </div>
+  </div>
+
+  <aside class="insights" id="insights">
+    <div class="eyebrow"><span class="badge"></span>LABLeads Insights</div>
+    <h3 id="i-title">—</h3>
+    <div class="body" id="i-body">—</div>
+    <div class="meta-row">
+      <div class="src">Synthesized from <strong id="i-src-count">—</strong> transcript moments · <strong id="i-match-count">—</strong> atoms in scope</div>
+      <div class="actions">
+        <button class="ghost-btn" id="i-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+          <span id="i-expand-label">Expand</span>
+        </button>
+        <button class="ghost-btn" id="i-copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span id="i-copy-label">Copy</span>
+        </button>
+        <button class="connect-btn" id="i-connect">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="6" r="2"></circle><circle cx="19" cy="6" r="2"></circle><circle cx="5" cy="18" r="2"></circle><circle cx="19" cy="18" r="2"></circle><line x1="7" y1="6" x2="17" y2="6"></line><line x1="7" y1="18" x2="17" y2="18"></line><line x1="5" y1="8" x2="5" y2="16"></line><line x1="19" y1="8" x2="19" y2="16"></line></svg>
+          Show the Connections
+        </button>
+        <button class="close-btn" id="i-close" aria-label="close">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <button class="tweaks-toggle" id="tweaks-toggle" aria-label="tweaks">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </button>
+
+  <div class="tweaks" id="tweaks">
+    <h4>Tweaks</h4>
+    <div class="tg">live model controls</div>
+
+    <div class="grp">
+      <label>Population <span class="val" id="v-pop">130</span></label>
+      <input type="range" id="t-pop" min="40" max="300" step="5" value="130" />
+
+      <label>Orbit speed <span class="val" id="v-motion">calm</span></label>
+      <input type="range" id="t-motion" min="0" max="100" step="1" value="32" />
+
+      <label>Pulse rate <span class="val" id="v-pulse">steady</span></label>
+      <input type="range" id="t-pulse" min="0" max="100" step="1" value="42" />
+    </div>
+
+    <div class="grp">
+      <label>Layout</label>
+      <div class="seg" id="seg-layout">
+        <button data-v="orbital" class="on">Orbital</button>
+        <button data-v="region">Regional</button>
+        <button data-v="free">Free</button>
+      </div>
+
+      <label>Bonds</label>
+      <div class="seg" id="seg-bonds">
+        <button data-v="all" class="on">All</button>
+        <button data-v="strong">Strong</button>
+        <button data-v="off">Off</button>
+      </div>
+
+      <label>Quotes</label>
+      <div class="seg two" id="seg-quotes">
+        <button data-v="on" class="on">On</button>
+        <button data-v="off">Off</button>
+      </div>
+
+      <label>Palette</label>
+      <div class="swatches" id="swatches">
+        <button data-v="lab" class="on" title="Lab cream"><div class="row"><span style="background:#faf6ee"></span><span style="background:#c8552d"></span><span style="background:#2a3d4a"></span></div></button>
+        <button data-v="dusk" title="Dusk"><div class="row"><span style="background:#1b1830"></span><span style="background:#e89eff"></span><span style="background:#9affd4"></span></div></button>
+        <button data-v="midnight" title="Midnight"><div class="row"><span style="background:#0d111c"></span><span style="background:#f5b452"></span><span style="background:#7cc4ff"></span></div></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-credit">A community is a stable atomic configuration · v3.1 · paused = query the lab</div>
+
+<style id="embed-overrides">
+  /* When embedded inside v4 IdeaNET (?embed=1), hide the duplicate chrome. */
+  body.embed .hdr,
+  body.embed .tweaks-toggle,
+  body.embed .tweaks,
+  body.embed .footer-credit { display: none !important; }
+  body.embed .figcap { top: 18px; bottom: auto; left: 28px; }
+  body.embed::before { mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%); -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%); }
+  body.embed .legend { bottom: 20px; right: 20px; }
+</style>
+<script>
+  // Embed mode — hide our own header so the host page's chrome is canonical.
+  if (new URLSearchParams(location.search).get('embed') === '1') {
+    document.body.classList.add('embed');
+  }
+</script>
+
+<script>
+/* ============================================================
+   LABLeads — orbital lab notebook · v2
+   ============================================================ */
+
+const REGIONS = [
+  "Bangladesh","Nigeria","Morocco","India","Pakistan","Kenya","Brazil",
+  "Mexico","Vietnam","South Africa","Chile","Peru","Indonesia","Philippines",
+  "Egypt","Ghana","Colombia","Ethiopia","Argentina","Spain","Utah","Senegal",
+  "Romania","Rwanda","Argentina · Rosario","Argentina · Buenos Aires"
+];
+
+const TAGS = [
+  "AI-narrated textbook video","Teacher confidence labs","Curriculum visuals",
+  "Office hours","Cross-network intros","Prompt engineering","Agent building",
+  "Claude Code deep-dive","Creativity & AI","Startup connections",
+  "AI literacy in displaced communities","Mini-AAA recordings","Knowledge sharing call",
+  "Onboarding cohort","Plot session","Creator DMs",
+  "Pro-license activation","Learning pathway design","Visual storytelling",
+  "Workflow integration","Field translation","Documentary segment",
+  "Government curriculum pitch","Local language fine-tune",
+  "Monthly challenge brief","Workshop + homework loop","Shared problem repo",
+  "Student-built app","Cross-school showcase","Instructional design",
+  "Skill-level self-placement","Cross-country co-build","Artifact peer review",
+  "Onboarding fast-track","Volunteer co-host","Universal problem statement",
+  "University research partnership","Privacy & compliance","Expertise directory",
+  "Anthropic direct line","Small-group breakout","Escalating an artifact",
+  "Cross-context pairing","K–12 evidence base","Coordinated ask upstream"
+];
+
+const QUOTES = {
+  lead: [
+    "There are no experts in AI — only different ways to use it.",
+    "Lab leads aren't above the lab. They keep it moving.",
+    "Catalysts, not gatekeepers.",
+    "Once a month is plenty — small touches, big momentum.",
+    "Identifying the quiet ones with amazing ideas.",
+    "The collaborative space is the next step.",
+    "From prompt engineering to building serious things.",
+    "Inspire, don't instruct.",
+    "Make space, don't claim space.",
+    "Reach out, validate, include.",
+    "One person can't carry the community — share the load with volunteers.",
+    "A monthly brief gives the lab direction without dictating it.",
+    "Workshops land deeper when there's homework between them.",
+    "Different countries, similar struggles — connect them.",
+    "Teaching is the deepest form of learning.",
+    "Lab leads sit in the middle — escalating what's promising, importing what's missing.",
+    "Smaller groups, lower stakes, more feedback.",
+    "Badge the expertise so people know who to DM.",
+    "Pair lab leads with a direct line into Anthropic for coordinated asks.",
+    "Privacy compliance is a community problem, not a personal one.",
+    "Universities can give us the evidence we don't have yet.",
+    "This is the only moment in history when every curriculum is changing at once.",
+    "An artifact built in one classroom can scale — if someone helps lift it."
+  ],
+  active: [
+    "Two contributions a month is the rhythm.",
+    "I tried someone's method and shared back.",
+    "Met a creator from another lab — we're collaborating.",
+    "Building a textbook as AI-generated visuals.",
+    "Teaching forty children how to use it.",
+    "Combining tools — Claude, video, voice, edit.",
+    "Approaching the ministry with a curriculum demo.",
+    "DM me — I'll do an intro.",
+    "Posting more, learning more.",
+    "It's not a giveaway, it's a year in a lab.",
+    "My students are building their own apps — even leading other schools.",
+    "Advanced students are accelerating language comprehension for the rest.",
+    "I'm sharing every week's progress with my colleagues.",
+    "We need a shared repository — like STEAM has — that any teacher can pull from.",
+    "My artifacts feel personal; I'd love a real-world brief to point them at.",
+    "Where do I sit — beginner, intermediate, advanced? Not sure, still building.",
+    "Workshop, then a week of homework, then feedback — that loop teaches.",
+    "I straddle school and university — happy to bridge the two.",
+    "The Stanford K–12 review showed weak evidence — we could change that together.",
+    "I'm getting technical — apps, websites, bugs — a quick DM from someone versed helps.",
+    "Behind the scenes I'm active; I'm just slower to post in the main chat.",
+    "Iceland marks differently than we do — some patterns travel, some don't.",
+    "Use a fake ID for student work — we have to be careful with the data."
+  ],
+  quiet: [
+    "Standing by the ocean, wondering if I should jump in.",
+    "Just got my leg in the water.",
+    "Listening, learning, watching.",
+    "Reading every thread before posting.",
+    "Activating the account this week.",
+    "Lurking with intent.",
+    "Saving every shared video.",
+    "Making time, not finding it.",
+    "My PC has no camera or mic — but I'm here, sharing in chat.",
+    "I applied a while back and never heard — willing to try again.",
+    "Sharing what I learn with colleagues, even when I'm quiet here.",
+    "Watching the WhatsApp threads — not posting yet, but learning.",
+    "A smaller group might be where I finally speak up."
+  ]
+};
+
+const PALETTES = {
+  lab: {
+    bg: "#faf6ee", paper2: "#f3ede0", rule: "#e6dfce",
+    ink: "#1c1916", ink2: "#4d4639", ink3: "#8a7f6c", ink4: "#c5b99f",
+    lead: "#c8552d", leadSoft: "#e89c7a",
+    active: "#2a3d4a", activeSoft: "#6e8290",
+    quiet: "#a89884", pulse: "#d97757",
+    bondBase: "rgba(28,25,22,0.32)", bondDim: "rgba(28,25,22,0.10)",
+    isLight: true
+  },
+  dusk: {
+    bg: "#1b1830", paper2: "#1a1530", rule: "rgba(255,255,255,0.10)",
+    ink: "#f4ecff", ink2: "#c6bbe3", ink3: "#7e74a0", ink4: "#4a4368",
+    lead: "#e89eff", leadSoft: "#f5c8ff",
+    active: "#9affd4", activeSoft: "#c4ffe7",
+    quiet: "#a8a0c0", pulse: "#fff0fb",
+    bondBase: "rgba(244,236,255,0.36)", bondDim: "rgba(244,236,255,0.12)",
+    isLight: false
+  },
+  midnight: {
+    bg: "#0d111c", paper2: "#131827", rule: "rgba(255,255,255,0.08)",
+    ink: "#f4f1ea", ink2: "#b8bcc8", ink3: "#6a7088", ink4: "#3a3f52",
+    lead: "#f5b452", leadSoft: "#ffd58a",
+    active: "#7cc4ff", activeSoft: "#b6dfff",
+    quiet: "#a8a8b8", pulse: "#fff2c4",
+    bondBase: "rgba(244,241,234,0.32)", bondDim: "rgba(244,241,234,0.10)",
+    isLight: false
+  }
+};
+
+/* ----- canvas ----- */
+const cv = document.getElementById('universe');
+const ctx = cv.getContext('2d');
+let DPR = Math.min(window.devicePixelRatio || 1, 2);
+function fitCanvas(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = innerWidth * DPR; cv.height = innerHeight * DPR;
+  cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+}
+fitCanvas();
+addEventListener('resize', () => { fitCanvas(); rebuild(); });
+
+/* ----- baked insights corpus (paraphrased from transcripts, no names) ----- */
+const INSIGHTS = [
+  {
+    id: 'mentoring',
+    title: "Lab leads as catalysts, not gatekeepers",
+    keywords: ['lead','leadlead','lablead','mentor','mentoring','catalyst','distribute','bottleneck','gatekeep','assistant','leader','leadership','role','organize'],
+    matchTags: ['Volunteer co-host','Onboarding fast-track','Office hours','Onboarding cohort','Cross-network intros','Anthropic direct line'],
+    matchKinds: ['lead'],
+    body: "The lab is moving past a phase where one person carries the room. Lab leads aren\u2019t experts ranked above the community \u2014 they\u2019re catalysts who keep ideas circulating, validate quieter contributors, and absorb the energy-cost of community management so it doesn\u2019t fall on a single host. A small group of 10\u201320 self-identified leads, badged in the chat, gives newer creators a trusted DM to send when they\u2019re stuck on a prompt, a bug, or an idea.",
+    bodyLong: "The lab is moving past a phase where one person carries the room. The transcripts show a community that has outgrown the single-host model \u2014 there are too many regions, too many languages, too many parallel conversations for one person to seed, witness, and respond to. Without distribution, the founder burns out and the quieter voices stay quiet because nobody has the bandwidth to pull them forward.\n\nLab leads aren\u2019t experts ranked above the community \u2014 they\u2019re catalysts. Their job is to keep ideas circulating, validate quieter contributors when they post for the first time, and absorb the invisible labour of community management so it doesn\u2019t fall on a single host. The metaphor that kept returning in conversation was role models, not authorities: people who model what active participation looks like and make it safer for others to copy.\n\nThe practical shape is small \u2014 10 to 20 self-identified leads, lightly badged in the chat, distributed across regions and time zones. Members know who to DM when they\u2019re stuck on a prompt, a bug, or an idea they\u2019re afraid to post in front of everyone. The system is robust the moment no single failure point exists."
+  },
+  {
+    id: 'monthly-brief',
+    title: "Monthly briefs give the lab direction without dictating it",
+    keywords: ['brief','monthly','challenge','direction','prompt','purpose','focus','project','assignment','goal'],
+    matchTags: ['Monthly challenge brief','Universal problem statement','Cross-country co-build','Shared problem repo'],
+    body: "A recurring theme: creators love the openness of the lab, but their artifacts can feel personal or imaginary without a shared problem to point them at. A monthly or bi-weekly brief \u2014 a real, somewhat universal problem (campus orientation, classroom assessment, a curriculum gap) \u2014 lets people choose to engage, work solo or in small groups, and bring back artifacts that solve something real. Direction without dictation.",
+    bodyLong: "A recurring theme across the conversations: creators love the openness of the lab, but without a shared problem to point at, their artifacts drift into the personal or the imaginary. People build something for their own classroom, share it, and the thread ends \u2014 because nobody else has the same exact problem in front of them that week.\n\nA monthly or bi-weekly brief solves this. Not a homework assignment \u2014 a real, somewhat universal problem framed openly enough that creators in different countries can interpret it through their own context: campus orientation for first-year students, formative classroom assessment, a curriculum gap nobody has addressed. People choose to engage or skip, work solo or in small groups, and bring back artifacts that all answer the same underlying question in different ways.\n\nThe value is in the comparison. When five educators in five countries respond to the same brief, the lab can see what travels and what is locally bound \u2014 which is exactly the kind of insight no one of them could produce alone. The brief gives direction without dictating, and the artifacts become a corpus instead of a scatter."
+  },
+  {
+    id: 'workshops',
+    title: "Workshops land deeper when there\u2019s homework between them",
+    keywords: ['workshop','training','homework','session','cohort','learn','teach','curriculum','feedback','practice'],
+    matchTags: ['Workshop + homework loop','Teacher confidence labs','Learning pathway design','Artifact peer review'],
+    body: "Existing AI workshops often dead-end at \u201chere\u2019s information \u2014 now go do something with it.\u201d The lab can do better: pair workshops a week apart, with homework in between, and use the second session for feedback on what people actually built. Not certifications, just a tight loop \u2014 input, attempt, critique. Anthropic courseware works as scaffolding; the lab provides the practice and the peers.",
+    bodyLong: "Existing AI workshops \u2014 even good ones \u2014 tend to dead-end at \u201chere\u2019s information, now go do something with it.\u201d Participants leave inspired but isolated, and most of what they learned evaporates within a week because there\u2019s no next step that pulls them back.\n\nThe lab can do better by pairing sessions. The first workshop introduces the concept; participants take homework into their own context (a class, a brief, a prompt to try); the second session, a week later, is dedicated to feedback on what people actually built. Not certifications. Not lectures. A tight loop \u2014 input, attempt, critique, attempt again \u2014 which is how skilled practice actually develops in any domain.\n\nAnthropic\u2019s courseware works perfectly as scaffolding for the input phase. What the lab uniquely provides is the practice and the peers: a small enough audience that critique can be specific and kind, a diverse enough audience that the feedback expands your sense of what\u2019s possible. Lab leads host the second session and keep the conversation honest."
+  },
+  {
+    id: 'small-groups',
+    title: "Smaller groups, lower stakes, more feedback",
+    keywords: ['small','smaller','group','breakout','feedback','context','intimate','whatsapp','chat','quiet','listener','lurk'],
+    matchTags: ['Small-group breakout','Artifact peer review','Cross-school showcase'],
+    matchKinds: ['quiet','active'],
+    body: "The main chat works, but many active contributors are working behind the scenes and don\u2019t bring their ideas to the full group. Smaller, contextual breakouts \u2014 grouped by a week\u2019s topic or by working language \u2014 lower the social cost of posting and let those quieter members surface. The lab leads\u2019 job here isn\u2019t to talk, it\u2019s to host the smaller room.",
+    bodyLong: "The main chat works, but it has a known failure mode: many of the most active contributors are working hard behind the scenes \u2014 building, experimenting, learning fast \u2014 and never bring their work to the full group. The social cost of posting in a large channel is high, especially for newer members or for anyone who feels their idea isn\u2019t ready yet.\n\nSmaller breakouts dramatically lower that cost. Grouping by a week\u2019s topic (assessment, agents, video, classroom orchestration), by working language, or by phase of project means the audience is contextual: people who already share your frame, who can give specific feedback rather than generic encouragement. The conversation tightens, and quieter members start to surface because the room finally feels like the right size for their idea.\n\nThe lab leads\u2019 job in a breakout isn\u2019t to talk \u2014 it\u2019s to host. Make sure everyone gets a turn, ask the question that draws someone out, summarize back to the full lab what the small group decided. The whole becomes more than the chat."
+  },
+  {
+    id: 'expertise',
+    title: "An expertise directory \u2014 know who to DM",
+    keywords: ['expertise','expert','skill','directory','badge','versed','dm','direct','message','reach','contact','versed','technical','bug','help','support'],
+    matchTags: ['Expertise directory','Creator DMs','Claude Code deep-dive','Agent building','Workflow integration'],
+    body: "As creators get more technical \u2014 apps, websites, MCPs, debugging \u2014 a quick DM to someone who\u2019s already solved the same problem beats a generic forum post. Lab leads can be informally badged by what they\u2019ve actually built or fixed, so anyone hitting a wall on agents, prompting, video, or code knows whose handle to type first. Not formal credentials \u2014 a community-maintained map of who\u2019s versed in what.",
+    bodyLong: "The lab is moving up the stack. Members who started with prompts and artifacts are now shipping apps, websites, agents with tool use, MCP integrations. The questions they\u2019re asking are increasingly technical, and a generic post in the main chat is often the wrong place to ask them \u2014 too noisy, too slow, too easily missed.\n\nWhat works better is a quick DM to someone who has already solved the same problem. The lab leads can be informally badged by what they have actually built or fixed: prompting, agents, Claude Code, video, classroom orchestration, fine-tuning, deployment. Anyone hitting a wall knows whose handle to type first \u2014 and the lead either answers or routes the question to whoever can.\n\nThe point is explicitly not formal credentials. The lab doesn\u2019t want to become a certification body. What it needs is a community-maintained map of who is versed in what, updated as people\u2019s practice evolves \u2014 a directory that respects the fact that expertise here is built by doing, not granted by anyone outside the room."
+  },
+  {
+    id: 'cross-country',
+    title: "Different countries, similar struggles \u2014 connect them",
+    keywords: ['country','global','cross','international','local','context','iceland','marking','assessment','similar','share','culture','translation','language'],
+    matchTags: ['Cross-country co-build','Universal problem statement','Field translation','Local language fine-tune'],
+    body: "Educators in unconnected geographies keep arriving at the same problems \u2014 with very different local constraints. A heavily-examined system and a formative-assessment one don\u2019t translate cleanly, but the underlying questions about marking, feedback, and learning evidence are the same. Pairing creators across countries on a single brief surfaces what travels and what doesn\u2019t, and gives both sides something they couldn\u2019t build alone.",
+    bodyLong: "Educators in completely unconnected geographies keep arriving at the same fundamental problems \u2014 only the local constraints are different. A teacher in Iceland working inside a heavily-examined system, a teacher in Catalonia working in a formative-assessment one, a teacher in the UK navigating a curriculum review: their assessment questions look totally different on the surface and turn out to be the same underneath.\n\nThe artifacts don\u2019t translate cleanly across these contexts \u2014 an assessment tool built for one system can be illegal or pedagogically inappropriate in another. But the underlying questions about marking, feedback, learning evidence, and student trust are universal, and the dialogue between two educators with different constraints is more useful than either of them comparing notes with a local colleague who shares all their assumptions.\n\nPairing creators across countries on a single brief is how the lab makes this productive. It surfaces what travels and what doesn\u2019t. It gives both sides a colleague who has had to think harder about an assumption they take for granted. And it produces a body of work that no single national context could generate on its own."
+  },
+  {
+    id: 'university-research',
+    title: "Universities can give the lab the evidence it doesn\u2019t have yet",
+    keywords: ['university','research','evidence','data','stanford','academic','study','partner','impact','outcomes','learning','k-12','k12'],
+    matchTags: ['University research partnership','K\u201312 evidence base','Coordinated ask upstream'],
+    body: "Outside reviews of AI in K\u201312 keep landing on weak evidence \u2014 not because the work isn\u2019t there, but because no one is measuring it. Lab leads who straddle classroom and university can broker research partnerships: the lab provides the practice and the artifacts, the university provides the methodology and the data structure. The community doesn\u2019t have to carry the evidence base alone \u2014 it has to be willing to be studied.",
+    bodyLong: "Independent reviews of AI in K\u201312 keep landing on the same conclusion: the evidence base is weak. Not because the work isn\u2019t happening \u2014 the lab is proof that thoughtful classroom practice is everywhere \u2014 but because almost no one is measuring it in a way that academic, policy, or media reviewers will accept.\n\nLab leads who straddle classroom and university are unusually well-positioned to broker the partnership that fixes this. The lab provides the practice, the artifacts, the diversity of contexts, and the willingness to be studied. The university partner provides the methodology, the IRB process, the longitudinal frame, and the credibility that the rest of the system listens for.\n\nThe community doesn\u2019t have to carry the evidence base alone \u2014 it has to be willing to open up to research. That is a tradeoff: more documentation, more consent processes, more visibility. But the alternative is letting the next outside review continue to conclude that nobody has shown anything works."
+  },
+  {
+    id: 'privacy',
+    title: "Privacy compliance is a community problem, not a personal one",
+    keywords: ['privacy','compliance','data','legal','gdpr','student','id','anonymous','consent','regulation','escalate','classroom'],
+    matchTags: ['Privacy & compliance','K\u201312 evidence base','Coordinated ask upstream'],
+    body: "Once an artifact moves from one classroom to a district or a country, the privacy questions multiply: which legislation applies, whose data is in play, what to anonymize. No single creator is a compliance expert, and trying to figure it out alone is paralyzing. Practical patterns from the community \u2014 use a fake student ID, separate data from identifiers, document what you collected \u2014 are useful, but lab leads can also surface this upward as a coordinated ask to partners like Anthropic.",
+    bodyLong: "As soon as an artifact moves from one classroom to a district, a country, or another country, the privacy questions multiply. Which legislation applies? Whose data is in play \u2014 the teacher\u2019s, the student\u2019s, the parent\u2019s? What has to be anonymized before anything is shared, and what counts as anonymized in the first place? The cross-jurisdictional version of this problem is genuinely hard, and no individual creator is a compliance expert.\n\nTrying to figure it out alone is paralyzing \u2014 and the most common outcome is that the artifact never leaves the original classroom, even when it should. The lab has practical patterns that work: use a fabricated student ID, separate data from identifiers, document what you collected and why, default to the strictest jurisdiction in the room. These aren\u2019t legal advice, they\u2019re working defaults that let people move forward.\n\nBut lab leads can also surface this upward. A pattern of compliance questions across the community is a coordinated ask \u2014 to partners like Anthropic, to legal communities, to research collaborators \u2014 not 200 individual creators each trying to get clarity in their inbox. Treating compliance as a community problem rather than a personal one is what unlocks scale."
+  },
+  {
+    id: 'escalation',
+    title: "Escalating an artifact \u2014 from one classroom to many",
+    keywords: ['escalate','scale','grow','share','repository','steam','repo','colleagues','students','school','district','government'],
+    matchTags: ['Escalating an artifact','Shared problem repo','Government curriculum pitch','Cross-school showcase','Student-built app'],
+    body: "An artifact built for forty children can become a method for hundreds \u2014 if someone helps lift it out. Teachers are already sharing progress with their colleagues, pitching ministries, and watching their own students build apps that lead other schools. What\u2019s missing is a shared repository, the way STEAM has one, that any teacher in the network can pull from and contribute to. Lab leads sit in the middle: identify which artifacts are ready to travel, pair them with the people who can move them.",
+    bodyLong: "An artifact built for forty children can become a method for hundreds \u2014 sometimes thousands \u2014 if someone helps lift it out. The lab is already full of cases where this is happening informally: teachers presenting to their colleagues, pitching ministries, watching their own students build apps that other schools then adopt. The escalation pathway exists, but it is manual and uneven, and most artifacts that could travel don\u2019t.\n\nWhat\u2019s missing is a shared repository, the way STEAM education has one, that any teacher in the network can pull from and contribute to. Not a curated app store with editors and gatekeepers \u2014 a living collection that surfaces what other practitioners have actually used, in what contexts, with what caveats. The artifact carries its own provenance: who built it, who tested it, what changed.\n\nLab leads sit in the middle of this. Their role is to identify which artifacts are ready to travel \u2014 not the polished ones necessarily, but the ones whose method generalizes \u2014 and to pair them with the people who can move them: a teacher in another country, a researcher who can validate it, a policymaker who needs a concrete example. The escalation pathway becomes a system, not a series of accidents."
+  },
+  {
+    id: 'anthropic-line',
+    title: "A direct line to Anthropic for coordinated asks",
+    keywords: ['anthropic','partner','upstream','company','contact','support','feedback','pilot','model','feature'],
+    matchTags: ['Anthropic direct line','Coordinated ask upstream','Pro-license activation'],
+    body: "Anthropic is already paying attention to the lab. The opportunity is to make the channel two-way: when a small group of lab leads is pursuing the same problem \u2014 say, classroom privacy, or local-language tuning \u2014 the lab can package that as a coordinated request rather than a scatter of individual DMs. Each lab lead becomes a point of contact for one thread, with a named counterpart at Anthropic to keep the conversation moving.",
+    bodyLong: "Anthropic is already paying attention to the lab. The opportunity \u2014 raised explicitly in the conversations \u2014 is to make the channel two-way, more structured, and more useful for both sides. Right now feedback flows up in scattered ways: an individual DM, a comment in a workshop, a question that bubbles into a session. Most of it doesn\u2019t aggregate into anything Anthropic can act on.\n\nA coordinated channel changes that. When a small group of lab leads is actively pursuing the same problem \u2014 classroom privacy, local-language fine-tuning, video pipelines, agent reliability \u2014 the lab can package the request as a single coherent thread rather than as fifty individual asks. Anthropic gets a clearer signal about where investment matters; the lab gets faster and more substantive answers.\n\nThe practical shape: each lab lead owns a thread, with a named counterpart inside Anthropic who keeps the conversation moving on the other side. Not a formal partnership, just a connective tissue that respects both sides\u2019 time and makes the work easier to coordinate."
+  },
+  {
+    id: 'onboarding',
+    title: "Fixing onboarding so applicants don\u2019t fall through",
+    keywords: ['onboard','onboarding','apply','application','approval','process','join','fellow','alumni','wait','response','invite'],
+    matchTags: ['Onboarding fast-track','Onboarding cohort','Pro-license activation'],
+    body: "Several applicants applied to the lab earlier and never heard back \u2014 a hiccup in the approval pipeline when one person was running the whole thing. The fix is structural: a clear onboarding cohort, a fast-track lane for referrals from existing members, and lab leads who can co-host the welcome so it doesn\u2019t bottleneck on the founder again.",
+    bodyLong: "Several promising applicants applied to the lab earlier and never heard back \u2014 a hiccup in the approval pipeline that traces directly back to the single-host problem. When one person is running intake, community management, and programming all at once, applications fall through the cracks, and the people most affected are exactly the people the lab most wants: motivated outsiders who took a risk to apply.\n\nThe fix is structural, not procedural. A clear onboarding cohort \u2014 say, a small group welcomed together every two or four weeks \u2014 means new members arrive with peers and a shared starting context rather than dropping into a noisy chat. A fast-track lane for referrals from existing members preserves quality without slowing entry. And lab leads can co-host the welcome, share the load of orientation, and make sure no application sits unanswered for months.\n\nThe onboarding experience is also the first signal a new member receives about whether the lab takes them seriously. Getting it right \u2014 fast, warm, contextual \u2014 dramatically raises the chance they will go on to contribute."
+  },
+  {
+    id: 'levels',
+    title: "Where do I sit \u2014 beginner, intermediate, advanced?",
+    keywords: ['level','beginner','intermediate','advanced','progress','skill','self','identify','place','where'],
+    matchTags: ['Skill-level self-placement','Learning pathway design'],
+    body: "Newer creators are unsure where they sit on a beginner\u2013intermediate\u2013advanced spectrum, and that uncertainty makes it harder to know who to ask for help and what to aim for next. Lab leads don\u2019t need formal levels, but a lightweight self-placement \u2014 paired with the expertise directory \u2014 helps people see a path forward without turning the lab into a credentialing pipeline.",
+    bodyLong: "Newer creators kept raising the same uncertainty in conversation: where do I sit? Beginner, intermediate, advanced? It sounds like a small question, but it shapes everything downstream \u2014 which sessions to attend, who to ask for help, which artifacts to attempt, whether to post in the main chat or wait until you feel more ready.\n\nLab leads don\u2019t need to introduce formal levels \u2014 the moment the lab starts grading members, it becomes a different kind of community. But a lightweight self-placement, paired with the expertise directory, gives people a frame: I am intermediate on prompting, beginner on agents, working toward classroom deployment. Now the social map has axes, and the right questions can be asked of the right people.\n\nThe goal is orientation, not certification. People should be able to update their own placement freely as they grow, and lab leads should resist any drift toward turning the lab into a credentialing pipeline. The lab\u2019s strength is that it is a community of practitioners \u2014 the levels are scaffolding, not gates."
+  },
+  {
+    id: 'curriculum-moment',
+    title: "Every curriculum is changing at once",
+    keywords: ['curriculum','change','moment','history','teacher','teaching','pedagogy','world','transformation','school'],
+    matchTags: ['Government curriculum pitch','Cross-country co-build','K\u201312 evidence base'],
+    body: "This is the only moment in living memory when every country\u2019s curriculum, pedagogy, and assessment practice is in motion at the same time. A teacher in Kenya, a teacher in the UK, a teacher in Catalonia are wrestling with the same functional dilemma in completely different policy contexts. The lab is small enough to act on this and connected enough to compare notes \u2014 that combination is the moment\u2019s real opportunity.",
+    bodyLong: "This is the only moment in living memory \u2014 the transcripts return to this point again and again \u2014 when every country\u2019s curriculum, pedagogy, and assessment practice is in motion at the same time. Usually education changes one system at a time, slowly, in isolation from peer systems elsewhere. Right now, every system is reconsidering itself simultaneously, and most are doing so without much access to what other systems are learning.\n\nA teacher in Kenya, a teacher in the UK, a teacher in Catalonia are wrestling with the same functional dilemma \u2014 how AI changes what learning evidence looks like, what assessment can mean, what teachers spend their time on \u2014 inside completely different policy contexts. The functional questions are universal even when the policy answers are local.\n\nThe lab is small enough to act on this and connected enough to compare notes across those contexts in near real time. That combination \u2014 small enough to be coherent, connected enough to span the change \u2014 is the moment\u2019s real opportunity. Treating it as a working consortium rather than a chat community is what would let it punch above its size."
+  }
+];
+
+/* ----- state ----- */
+const state = {
+  pop: 130, motion: 0.32, pulseRate: 0.42,
+  bondsMode: 'all', layout: 'orbital', paletteName: 'lab',
+  pal: PALETTES.lab,
+  quotesOn: true,
+  nodes: [], bonds: [], pulses: [],
+  hover: null, selected: null, drag: null,
+  t: 0, lastQuoteAt: 0,
+  paused: false,
+  connectionsOn: false,
+  matchSet: null,           // Set of node indices matched by current insight
+  matchOrder: [],           // ordered list for overlay line
+  currentInsight: null
+};
+
+let _seed = 7;
+function srand(){ _seed = (_seed * 9301 + 49297) % 233280; return _seed / 233280; }
+function setSeed(s){ _seed = s; }
+
+/* ---------- model ---------- */
+function buildModel(){
+  setSeed(11);
+  const N = state.pop;
+  const nLead = Math.max(3, Math.round(N * 0.13));
+  const nActive = Math.round(N * 0.30);
+  const nQuiet = N - nLead - nActive;
+
+  const nodes = [];
+  for (let i = 0; i < nLead; i++)   nodes.push(makeNode('lead'));
+  for (let i = 0; i < nActive; i++) nodes.push(makeNode('active'));
+  for (let i = 0; i < nQuiet; i++)  nodes.push(makeNode('quiet'));
+
+  // assign orbital params
+  const w = innerWidth, h = innerHeight;
+  const minD = Math.min(w, h);
+  const R0 = minD * 0.06;     // lead core radius
+  const R1 = minD * 0.22;     // creator shell
+  const R2 = minD * 0.36;     // listener shell
+  // small variance
+  let li=0, ai=0, qi=0;
+  const arrLead = nodes.filter(n => n.kind==='lead');
+  const arrAct  = nodes.filter(n => n.kind==='active');
+  const arrQui  = nodes.filter(n => n.kind==='quiet');
+  const speed = 1;
+  arrLead.forEach((n,i) => {
+    n.shell = 0;
+    n.theta = (i / arrLead.length) * Math.PI*2 + srand()*0.4;
+    n.targetR = R0 + (srand() - 0.3) * 12;
+    n.omega = 0.05 + srand()*0.04;  // slow inner rotation
+  });
+  arrAct.forEach((n,i) => {
+    n.shell = 1;
+    n.theta = (i / arrAct.length) * Math.PI*2 + srand()*0.2;
+    n.targetR = R1 + (srand() - 0.5) * 28;
+    n.omega = -(0.014 + srand()*0.010);  // counter rotation
+  });
+  arrQui.forEach((n,i) => {
+    n.shell = 2;
+    n.theta = (i / arrQui.length) * Math.PI*2 + srand()*0.1;
+    n.targetR = R2 + (srand() - 0.5) * 50;
+    n.omega = 0.005 + srand()*0.006;
+  });
+
+  // initial positions
+  for (const n of nodes) {
+    n.x = w/2 + Math.cos(n.theta) * n.targetR;
+    n.y = h/2 + Math.sin(n.theta) * n.targetR;
+    n.vx = 0; n.vy = 0;
+    n.region = REGIONS[Math.floor(srand() * REGIONS.length)];
+  }
+
+  // bonds with types
+  // 'single' (cohort), 'double' (collab), 'dotted' (intro/DM)
+  const bonds = [];
+  const bondSet = new Set();
+  function addBond(a, b, type, strength){
+    if (a === b) return;
+    const k = a < b ? `${a}-${b}-${type}` : `${b}-${a}-${type}`;
+    if (bondSet.has(k)) return;
+    bondSet.add(k);
+    bonds.push({ a, b, type, s: strength, life: srand() });
+  }
+  const leadIdx = nodes.map((n,i)=> n.kind==='lead'?i:-1).filter(i=>i>=0);
+  const actIdx  = nodes.map((n,i)=> n.kind==='active'?i:-1).filter(i=>i>=0);
+  const quiIdx  = nodes.map((n,i)=> n.kind==='quiet'?i:-1).filter(i=>i>=0);
+
+  // lead↔lead: collaborations among leads (double bonds)
+  for (let i = 0; i < leadIdx.length; i++) {
+    for (let j = i+1; j < leadIdx.length; j++) {
+      if (srand() < 0.42) addBond(leadIdx[i], leadIdx[j], 'double', 0.85 + srand()*0.15);
+    }
+  }
+  // each lead → creators: mostly cohort (single) + a few collabs (double)
+  for (const li of leadIdx) {
+    const a = 4 + Math.floor(srand()*6);
+    for (let i = 0; i < a; i++) {
+      const target = actIdx[Math.floor(srand()*actIdx.length)];
+      const type = srand() < 0.30 ? 'double' : 'single';
+      addBond(li, target, type, 0.55 + srand()*0.30);
+    }
+    // each lead reaches out to listeners (intros)
+    const q = 2 + Math.floor(srand()*4);
+    for (let i = 0; i < q; i++) {
+      addBond(li, quiIdx[Math.floor(srand()*quiIdx.length)], 'dotted', 0.30 + srand()*0.25);
+    }
+  }
+  // active↔active: collabs and cohort
+  for (const ai of actIdx) {
+    const k = 1 + Math.floor(srand()*3);
+    for (let i = 0; i < k; i++) {
+      const target = actIdx[Math.floor(srand()*actIdx.length)];
+      const type = srand() < 0.45 ? 'double' : 'single';
+      addBond(ai, target, type, 0.45 + srand()*0.30);
+    }
+  }
+  // active↔quiet: intros/DMs (dotted)
+  for (const ai of actIdx) {
+    if (srand() < 0.40) {
+      addBond(ai, quiIdx[Math.floor(srand()*quiIdx.length)], 'dotted', 0.25 + srand()*0.20);
+    }
+  }
+  // quiet↔quiet: rare cohort
+  for (const qi of quiIdx) {
+    if (srand() < 0.10) {
+      addBond(qi, quiIdx[Math.floor(srand()*quiIdx.length)], 'single', 0.2 + srand()*0.2);
+    }
+  }
+
+  state.nodes = nodes;
+  state.bonds = bonds;
+  computeStats();
+}
+
+function makeNode(kind){
+  const r = kind === 'lead' ? 11 + srand()*3
+          : kind === 'active' ? 6 + srand()*2
+          : 3 + srand()*1.4;
+  const tag = TAGS[Math.floor(srand()*TAGS.length)];
+  const cohort = ["A·25","A·25","A·26","B·26","C·26"][Math.floor(srand()*5)];
+  const id = String(1000 + Math.floor(srand()*8999));
+  const glyphs = ['◇','◈','✦','✧','◉','○','◎','✺','❍','✶','◐','◑','⬡','⬢'];
+  const g = glyphs[Math.floor(srand()*glyphs.length)];
+  return {
+    kind, r, x:0, y:0, vx:0, vy:0,
+    tag, cohort, region: "—",
+    handle: `${g} creator · ${id}`,
+    quote: pick(QUOTES[kind]),
+    bonds: 0, cadence: kind === 'lead' ? "weekly" : kind === 'active' ? "twice a month" : "warming up",
+    glowPhase: srand() * Math.PI * 2,
+    flux: 0,
+    shell: 0, theta: 0, targetR: 0, omega: 0, perturbR: 0
+  };
+}
+function pick(arr){ return arr[Math.floor(srand()*arr.length)]; }
+
+function computeStats(){
+  state.nodes.forEach(n => n.bonds = 0);
+  state.bonds.forEach(b => { state.nodes[b.a].bonds++; state.nodes[b.b].bonds++; });
+  document.getElementById('s-leads').textContent = String(state.nodes.filter(n=>n.kind==='lead').length).padStart(2,'0');
+  document.getElementById('s-creators').textContent = String(state.nodes.filter(n=>n.kind!=='quiet').length);
+  document.getElementById('s-bonds').textContent = String(state.bonds.length);
+}
+
+/* ---------- physics ---------- */
+function step(dt){
+  state.t += dt * 0.016 * (0.4 + state.motion * 1.6);
+  const w = innerWidth, h = innerHeight;
+  const cx = w/2, cy = h/2;
+
+  if (state.layout === 'orbital') {
+    for (let i = 0; i < state.nodes.length; i++) {
+      const n = state.nodes[i];
+      if (state.drag && state.drag.idx === i) {
+        n.x = state.drag.x; n.y = state.drag.y;
+        n.vx = 0; n.vy = 0;
+        continue;
+      }
+      // when paused, freeze orbits (skip position updates) but still let pulses + halos breathe
+      if (state.paused) { n.glowPhase += 0.02; n.flux *= 0.97; continue; }
+      // advance angle
+      n.theta += n.omega * dt * (0.4 + state.motion * 1.4);
+      // small radial breathing
+      const breathe = Math.sin(state.t * 0.6 + n.glowPhase) * 4;
+      const targetX = cx + Math.cos(n.theta) * (n.targetR + breathe + n.perturbR);
+      const targetY = cy + Math.sin(n.theta) * (n.targetR + breathe + n.perturbR);
+      // ease toward orbit position
+      n.x += (targetX - n.x) * (0.05 + state.motion * 0.08);
+      n.y += (targetY - n.y) * (0.05 + state.motion * 0.08);
+      // perturb decay
+      n.perturbR *= 0.96;
+      n.glowPhase += 0.02;
+      n.flux *= 0.97;
+    }
+  } else {
+    // free / regional: force-directed with damping
+    forceStep(dt, cx, cy);
+  }
+
+  // pulses
+  if (Math.random() < state.pulseRate * 0.06 && state.bonds.length > 0) {
+    const b = state.bonds[Math.floor(Math.random() * state.bonds.length)];
+    const fromA = Math.random() < 0.5;
+    state.pulses.push({ bond: b, t: 0, dir: fromA ? 1 : -1, hops: 0,
+      color: state.nodes[fromA?b.a:b.b].kind });
+  }
+  for (let i = state.pulses.length - 1; i >= 0; i--) {
+    const p = state.pulses[i];
+    p.t += 0.018 + state.pulseRate * 0.02;
+    if (p.t >= 1) {
+      const arriveIdx = p.dir > 0 ? p.bond.b : p.bond.a;
+      state.nodes[arriveIdx].flux = 1.0;
+      // chance to spawn ambient quote near arriving lab-lead/active node
+      if (state.quotesOn && state.nodes[arriveIdx].kind !== 'quiet' && Math.random() < 0.18 && performance.now() - state.lastQuoteAt > 2200) {
+        spawnFloatNear(arriveIdx);
+        state.lastQuoteAt = performance.now();
+      }
+      if (p.hops < 2 && Math.random() < 0.55) {
+        const candidates = state.bonds.filter(b => (b.a === arriveIdx || b.b === arriveIdx) && b !== p.bond);
+        if (candidates.length) {
+          const nb = candidates[Math.floor(Math.random() * candidates.length)];
+          const dir = nb.a === arriveIdx ? 1 : -1;
+          state.pulses.push({ bond: nb, t: 0, dir, hops: p.hops + 1, color: p.color });
+        }
+      }
+      state.pulses.splice(i, 1);
+    }
+  }
+}
+
+function forceStep(dt, cx, cy){
+  const repK = 1100, springK = 0.020, damping = 0.86, centerK = 0.0011;
+  for (const b of state.bonds) {
+    const a = state.nodes[b.a], c = state.nodes[b.b];
+    let dx = c.x - a.x, dy = c.y - a.y;
+    let d = Math.hypot(dx, dy) || 0.0001;
+    const target = 80 - b.s * 30;
+    const f = (d - target) * springK * b.s;
+    a.vx += (dx/d) * f; a.vy += (dy/d) * f;
+    c.vx -= (dx/d) * f; c.vy -= (dy/d) * f;
+  }
+  // grid-based repulsion
+  const grid = {}, cell = 80;
+  for (let i = 0; i < state.nodes.length; i++) {
+    const n = state.nodes[i];
+    const gx = Math.floor(n.x / cell), gy = Math.floor(n.y / cell);
+    (grid[gx+','+gy] = grid[gx+','+gy] || []).push(i);
+  }
+  for (let i = 0; i < state.nodes.length; i++) {
+    const a = state.nodes[i];
+    const gx = Math.floor(a.x / cell), gy = Math.floor(a.y / cell);
+    for (let dx=-1; dx<=1; dx++) for (let dy=-1; dy<=1; dy++) {
+      const arr = grid[(gx+dx)+','+(gy+dy)];
+      if (!arr) continue;
+      for (const j of arr) {
+        if (j <= i) continue;
+        const c = state.nodes[j];
+        let ddx = c.x - a.x, ddy = c.y - a.y;
+        let d2 = ddx*ddx + ddy*ddy;
+        if (d2 > 130*130) continue;
+        let d = Math.sqrt(d2) || 0.001;
+        const f = repK / d2;
+        a.vx -= (ddx/d) * f; a.vy -= (ddy/d) * f;
+        c.vx += (ddx/d) * f; c.vy += (ddy/d) * f;
+      }
+    }
+  }
+  for (const n of state.nodes) {
+    if (state.layout === 'region') {
+      const tx = n.regionTargetX, ty = n.regionTargetY;
+      n.vx += (tx - n.x) * 0.012;
+      n.vy += (ty - n.y) * 0.012;
+    } else {
+      n.vx += (cx - n.x) * centerK;
+      n.vy += (cy - n.y) * centerK;
+    }
+    n.vx += (Math.random()-0.5) * 0.6 * state.motion;
+    n.vy += (Math.random()-0.5) * 0.6 * state.motion;
+  }
+  for (let i = 0; i < state.nodes.length; i++) {
+    const n = state.nodes[i];
+    if (state.drag && state.drag.idx === i) { n.x = state.drag.x; n.y = state.drag.y; n.vx=0; n.vy=0; continue; }
+    n.vx *= damping; n.vy *= damping;
+    const v = Math.hypot(n.vx, n.vy), vMax = 4 + state.motion * 8;
+    if (v > vMax) { n.vx *= vMax/v; n.vy *= vMax/v; }
+    n.x += n.vx; n.y += n.vy;
+    const pad = 30;
+    if (n.x < pad) n.vx += (pad - n.x) * 0.02;
+    if (n.x > innerWidth-pad) n.vx -= (n.x - (innerWidth-pad)) * 0.02;
+    if (n.y < pad) n.vy += (pad - n.y) * 0.02;
+    if (n.y > innerHeight-pad) n.vy -= (n.y - (innerHeight-pad)) * 0.02;
+    n.glowPhase += 0.02;
+    n.flux *= 0.97;
+  }
+}
+
+/* ---------- render ---------- */
+function render(){
+  const pal = state.pal;
+  ctx.save();
+  ctx.scale(DPR, DPR);
+  // clear
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+  if (state.layout === 'orbital') drawOrbits(pal);
+  drawBonds(pal);
+  if (state.connectionsOn) drawConnectionOverlay(pal);
+  drawPulses(pal);
+  // nodes (largest last so they sit on top)
+  const sorted = state.nodes.map((n,i)=>({n,i})).sort((a,b)=> a.n.r - b.n.r);
+  for (const {n,i} of sorted) {
+    const isHover = state.hover === i;
+    const isSelected = state.selected === i;
+    let dimmed = (state.hover != null && !isHover && !connected(state.hover, i)) ||
+                   (state.selected != null && !isSelected && !connected(state.selected, i));
+    if (state.connectionsOn && !isMatched(i)) dimmed = true;
+    drawNode(n, pal, isHover, isSelected, dimmed);
+  }
+  ctx.restore();
+}
+
+function drawOrbits(pal){
+  const w = innerWidth, h = innerHeight;
+  const cx = w/2, cy = h/2;
+  const minD = Math.min(w, h);
+  const radii = [minD * 0.22, minD * 0.36];
+  ctx.save();
+  ctx.strokeStyle = pal.bondDim;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 4]);
+  for (const r of radii) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // tick marks at cardinal points
+  ctx.strokeStyle = pal.bondDim;
+  ctx.lineWidth = 0.8;
+  for (const r of radii) {
+    for (let a = 0; a < Math.PI*2; a += Math.PI/2) {
+      const x = cx + Math.cos(a)*r, y = cy + Math.sin(a)*r;
+      ctx.beginPath(); ctx.moveTo(x-3, y); ctx.lineTo(x+3, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y-3); ctx.lineTo(x, y+3); ctx.stroke();
+    }
+  }
+  // shell labels
+  ctx.fillStyle = pal.ink3;
+  ctx.font = "9.5px 'JetBrains Mono', monospace";
+  ctx.textAlign = 'left';
+  const label1y = cy - radii[0] - 6;
+  const label2y = cy - radii[1] - 6;
+  ctx.fillText("S₁ · CREATORS", cx + 8, label1y);
+  ctx.fillText("S₂ · LISTENERS", cx + 8, label2y);
+  ctx.font = "9.5px 'JetBrains Mono', monospace";
+  ctx.fillText("CORE · LEADS", cx + 8, cy - 14);
+  ctx.restore();
+}
+
+function drawBonds(pal){
+  if (state.bondsMode === 'off') return;
+  const filterStrong = state.bondsMode === 'strong';
+  for (const b of state.bonds) {
+    if (filterStrong && b.s < 0.55) continue;
+    const a = state.nodes[b.a], c = state.nodes[b.b];
+    const dimmed = (state.hover != null && b.a !== state.hover && b.b !== state.hover) ||
+                   (state.selected != null && b.a !== state.selected && b.b !== state.selected);
+    const highlighted = (state.hover != null && (b.a === state.hover || b.b === state.hover)) ||
+                        (state.selected != null && (b.a === state.selected || b.b === state.selected));
+    const a0 = 0.18 + b.s * 0.22;
+    let alpha = a0;
+    if (dimmed) alpha = a0 * 0.20;
+    if (highlighted) alpha = Math.min(0.95, a0 * 2.6);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if (b.type === 'dotted') {
+      ctx.strokeStyle = highlighted ? pal.lead : pal.bondBase;
+      ctx.lineWidth = highlighted ? 1.1 : 0.7;
+      ctx.setLineDash([2.5, 3.5]);
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(c.x, c.y); ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (b.type === 'double') {
+      // two parallel lines
+      const dx = c.x - a.x, dy = c.y - a.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy/len, ny = dx/len;
+      const sep = 1.4;
+      ctx.strokeStyle = highlighted ? pal.lead : pal.bondBase;
+      ctx.lineWidth = highlighted ? 1.0 : 0.7;
+      // shorten endpoints to avoid going under nodes
+      const pad1 = a.r * 1.2, pad2 = c.r * 1.2;
+      const ux = dx/len, uy = dy/len;
+      const ax = a.x + ux*pad1, ay = a.y + uy*pad1;
+      const cx2 = c.x - ux*pad2, cy2 = c.y - uy*pad2;
+      ctx.beginPath();
+      ctx.moveTo(ax + nx*sep, ay + ny*sep);
+      ctx.lineTo(cx2 + nx*sep, cy2 + ny*sep);
+      ctx.moveTo(ax - nx*sep, ay - ny*sep);
+      ctx.lineTo(cx2 - nx*sep, cy2 - ny*sep);
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = highlighted ? pal.lead : pal.bondBase;
+      ctx.lineWidth = highlighted ? 1.1 : 0.7;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(c.x, c.y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function drawPulses(pal){
+  for (const p of state.pulses) {
+    const a = state.nodes[p.bond.a], c = state.nodes[p.bond.b];
+    const fromN = p.dir > 0 ? a : c, toN = p.dir > 0 ? c : a;
+    const t = p.t;
+    const x = fromN.x + (toN.x - fromN.x) * t;
+    const y = fromN.y + (toN.y - fromN.y) * t;
+    const col = p.color === 'lead' ? pal.lead : p.color === 'active' ? pal.active : pal.quiet;
+    const grd = ctx.createRadialGradient(x, y, 0, x, y, 12);
+    grd.addColorStop(0, col);
+    grd.addColorStop(0.3, col);
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function isMatched(i){ return state.matchSet && state.matchSet.has(i); }
+
+function drawNode(n, pal, hover, selected, dimmed){
+  const baseColor = n.kind === 'lead' ? pal.lead : n.kind === 'active' ? pal.active : pal.quiet;
+  const pulse = 0.92 + 0.08 * Math.sin(n.glowPhase);
+  const flux = n.flux;
+  const r = n.r * (hover || selected ? 1.30 : 1) * (1 + flux*0.4);
+  const alpha = dimmed ? 0.22 : 1;
+
+  ctx.save();
+  // soft halo for leads + active
+  if (n.kind === 'lead' || hover || selected) {
+    const glowR = r * (n.kind==='lead' ? 4.2 : 3.0) * (1 + flux*0.5);
+    const glowCol = n.kind === 'lead' ? pal.lead : (n.kind === 'active' ? pal.active : pal.quiet);
+    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+    g.addColorStop(0, glowCol);
+    g.addColorStop(0.4, glowCol);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = (n.kind === 'lead' ? 0.18 : 0.12) * alpha * pulse + flux*0.35;
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(n.x, n.y, glowR, 0, Math.PI*2); ctx.fill();
+  }
+
+  // electron rings for leads
+  if (n.kind === 'lead') {
+    ctx.globalAlpha = (0.30 + flux*0.4) * alpha;
+    ctx.strokeStyle = pal.lead;
+    ctx.lineWidth = 0.7;
+    for (let k = 0; k < 2; k++) {
+      const rr = r * (1.9 + k * 0.7);
+      const t = n.glowPhase * 0.6 + k * 0.7 + state.t * 0.1;
+      ctx.beginPath();
+      ctx.ellipse(n.x, n.y, rr, rr * 0.50, t, 0, Math.PI*2);
+      ctx.stroke();
+    }
+  }
+
+  // core
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = baseColor;
+  ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI*2); ctx.fill();
+
+  // bright highlight (planet sheen)
+  ctx.globalAlpha = 0.45 * alpha;
+  ctx.fillStyle = pal.isLight ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.85)';
+  ctx.beginPath(); ctx.arc(n.x - r*0.3, n.y - r*0.3, r*0.32, 0, Math.PI*2); ctx.fill();
+
+  // ring outline for definition on light bg
+  if (pal.isLight) {
+    ctx.globalAlpha = 0.18 * alpha;
+    ctx.strokeStyle = pal.ink;
+    ctx.lineWidth = 0.7;
+    ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI*2); ctx.stroke();
+  }
+
+  // selection / hover ring
+  if (selected || hover) {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = baseColor;
+    ctx.lineWidth = 1.0;
+    ctx.setLineDash(selected ? [3, 3] : []);
+    ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.0, 0, Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+function drawConnectionOverlay(pal){
+  if (!state.matchOrder || state.matchOrder.length < 2) return;
+  ctx.save();
+  // thin overlay polyline tracing matched atoms in order
+  ctx.strokeStyle = pal.lead;
+  ctx.lineWidth = 1.4;
+  ctx.globalAlpha = 0.55;
+  ctx.setLineDash([4, 4]);
+  ctx.lineDashOffset = -(state.t * 14);
+  ctx.beginPath();
+  for (let i = 0; i < state.matchOrder.length; i++) {
+    const n = state.nodes[state.matchOrder[i]];
+    if (i === 0) ctx.moveTo(n.x, n.y); else ctx.lineTo(n.x, n.y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // rings on each matched atom
+  ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = pal.lead;
+  ctx.lineWidth = 0.8;
+  for (const idx of state.matchOrder) {
+    const n = state.nodes[idx];
+    const rr = n.r * 2.6 + Math.sin(state.t * 1.2 + n.glowPhase) * 1.5;
+    ctx.beginPath(); ctx.arc(n.x, n.y, rr, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function connected(a, b){
+  if (a === b) return true;
+  for (const bd of state.bonds) {
+    if ((bd.a === a && bd.b === b) || (bd.a === b && bd.b === a)) return true;
+  }
+  return false;
+}
+
+/* ---------- regional layout helper ---------- */
+function recomputeRegionalTargets(){
+  if (state.layout !== 'region') return;
+  const w = innerWidth, h = innerHeight;
+  const groups = {};
+  for (const n of state.nodes) (groups[n.region] = groups[n.region] || []).push(n);
+  const keys = Object.keys(groups);
+  const cols = Math.ceil(Math.sqrt(keys.length));
+  const rows = Math.ceil(keys.length / cols);
+  keys.forEach((k, i) => {
+    const col = i % cols, row = Math.floor(i/cols);
+    const cx = (col + 0.5) * (w / cols);
+    const cy = (row + 0.5) * (h / rows);
+    groups[k].forEach((n, j) => {
+      const a = (j / groups[k].length) * Math.PI*2;
+      const R = 26 + Math.sqrt(groups[k].length) * 8;
+      n.regionTargetX = cx + Math.cos(a)*R;
+      n.regionTargetY = cy + Math.sin(a)*R;
+    });
+  });
+}
+
+/* ---------- pointer interaction ---------- */
+function pointerNode(x, y){
+  const list = state.nodes.map((n,i)=>({n,i})).sort((a,b)=>b.n.r - a.n.r);
+  for (const {n,i} of list) {
+    const r = (n.r * 1.5) + 4;
+    if ((x-n.x)*(x-n.x) + (y-n.y)*(y-n.y) <= r*r) return i;
+  }
+  return null;
+}
+
+cv.addEventListener('mousemove', e => {
+  const r = cv.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  if (state.drag) {
+    state.drag.x = x; state.drag.y = y;
+    // perturb orbit by reset of theta and target
+    if (state.layout === 'orbital') {
+      const n = state.nodes[state.drag.idx];
+      const dx = x - innerWidth/2, dy = y - innerHeight/2;
+      n.theta = Math.atan2(dy, dx);
+      n.perturbR = Math.hypot(dx, dy) - n.targetR;
+    }
+    return;
+  }
+  const idx = pointerNode(x, y);
+  if (state.hover !== idx) {
+    state.hover = idx;
+    if (idx != null && state.quotesOn && performance.now() - state.lastQuoteAt > 700) {
+      spawnFloatNear(idx);
+      state.lastQuoteAt = performance.now();
+    }
+  }
+  cv.classList.toggle('hovering', idx != null);
+});
+cv.addEventListener('mouseleave', () => { state.hover = null; });
+cv.addEventListener('mousedown', e => {
+  const r = cv.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  const idx = pointerNode(x, y);
+  if (idx != null) {
+    state.drag = { idx, x, y, t0: performance.now(), x0: x, y0: y };
+    cv.classList.add('dragging');
+  }
+});
+addEventListener('mouseup', () => {
+  if (state.drag) {
+    const dx = state.drag.x - state.drag.x0, dy = state.drag.y - state.drag.y0;
+    const moved = Math.hypot(dx, dy);
+    const dt = performance.now() - state.drag.t0;
+    if (moved < 5 && dt < 350) selectNode(state.drag.idx);
+    state.drag = null;
+    cv.classList.remove('dragging');
+  }
+});
+cv.addEventListener('touchstart', e => {
+  if (!e.touches[0]) return;
+  const r = cv.getBoundingClientRect();
+  const x = e.touches[0].clientX - r.left, y = e.touches[0].clientY - r.top;
+  const idx = pointerNode(x, y);
+  if (idx != null) state.drag = { idx, x, y, t0: performance.now(), x0: x, y0: y };
+}, {passive:true});
+cv.addEventListener('touchmove', e => {
+  if (state.drag && e.touches[0]) {
+    const r = cv.getBoundingClientRect();
+    state.drag.x = e.touches[0].clientX - r.left;
+    state.drag.y = e.touches[0].clientY - r.top;
+    if (state.layout === 'orbital') {
+      const n = state.nodes[state.drag.idx];
+      const dx = state.drag.x - innerWidth/2, dy = state.drag.y - innerHeight/2;
+      n.theta = Math.atan2(dy, dx);
+      n.perturbR = Math.hypot(dx, dy) - n.targetR;
+    }
+  }
+}, {passive:true});
+cv.addEventListener('touchend', () => {
+  if (state.drag) {
+    const dx = state.drag.x - state.drag.x0, dy = state.drag.y - state.drag.y0;
+    if (Math.hypot(dx,dy) < 6) selectNode(state.drag.idx);
+    state.drag = null;
+  }
+});
+
+/* ---------- detail panel ---------- */
+function selectNode(idx){
+  state.selected = idx;
+  const d = document.getElementById('detail');
+  const n = state.nodes[idx];
+  d.classList.remove('k-active','k-quiet');
+  if (n.kind === 'active') d.classList.add('k-active');
+  if (n.kind === 'quiet')  d.classList.add('k-quiet');
+  document.getElementById('d-glyph').textContent =
+    n.kind === 'lead' ? 'Lb' : n.kind === 'active' ? 'Cr' : 'Ls';
+  document.getElementById('d-role').textContent =
+    n.kind === 'lead' ? 'Lab lead — catalyst' :
+    n.kind === 'active' ? 'Active creator' : 'Listener — leg in the water';
+  document.getElementById('d-name').textContent = n.handle;
+  document.getElementById('d-where').textContent = `${n.region} · cohort ${n.cohort}`;
+  document.getElementById('d-quote').textContent = "“" + n.quote + "”";
+  document.getElementById('d-bonds').textContent = n.bonds;
+  document.getElementById('d-cadence').textContent = n.cadence;
+  document.getElementById('d-tag').textContent = n.tag;
+  d.classList.add('shown');
+}
+
+document.getElementById('detail-close').addEventListener('click', () => {
+  state.selected = null;
+  document.getElementById('detail').classList.remove('shown');
+});
+
+/* ---------- floating quote callouts ---------- */
+function spawnFloatNear(idx){
+  const n = state.nodes[idx];
+  const layer = document.getElementById('floats');
+  const el = document.createElement('div');
+  el.className = 'float-quote ' + n.kind;
+  el.textContent = "“" + pick(QUOTES[n.kind]) + "”";
+  // place it offset from node, away from center
+  const cx = innerWidth/2, cy = innerHeight/2;
+  let dx = n.x - cx, dy = n.y - cy;
+  const ml = Math.hypot(dx, dy) || 1;
+  let ox = (dx / ml) * 70 + (Math.random()-0.5) * 20;
+  let oy = (dy / ml) * 70 + (Math.random()-0.5) * 20;
+  // ensure it's onscreen
+  let qx = n.x + ox, qy = n.y + oy;
+  qx = Math.max(20, Math.min(innerWidth - 280, qx));
+  qy = Math.max(80, Math.min(innerHeight - 80, qy));
+  el.style.left = qx + 'px';
+  el.style.top = qy + 'px';
+  layer.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('shown'));
+  setTimeout(() => {
+    el.classList.remove('shown');
+    setTimeout(() => el.remove(), 400);
+  }, 3200 + Math.random()*1200);
+  // limit to 4 visible
+  while (layer.children.length > 4) layer.removeChild(layer.firstChild);
+}
+
+/* ---------- tweaks ---------- */
+function applyPalette(name){
+  const p = PALETTES[name];
+  state.paletteName = name;
+  state.pal = p;
+  const r = document.documentElement.style;
+  r.setProperty('--paper', p.bg);
+  r.setProperty('--paper-2', p.paper2);
+  r.setProperty('--paper-rule', p.rule);
+  r.setProperty('--ink', p.ink);
+  r.setProperty('--ink-2', p.ink2);
+  r.setProperty('--ink-3', p.ink3);
+  r.setProperty('--ink-4', p.ink4);
+  r.setProperty('--lead', p.lead);
+  r.setProperty('--active', p.active);
+  r.setProperty('--quiet', p.quiet);
+  r.setProperty('--rule-strong', p.isLight ? 'rgba(28,25,22,0.10)' : 'rgba(255,255,255,0.10)');
+  document.body.style.background =
+    p.isLight
+      ? `radial-gradient(ellipse at 18% 8%, ${withAlpha(p.lead,0.05)}, transparent 55%),
+         radial-gradient(ellipse at 88% 92%, ${withAlpha(p.active,0.04)}, transparent 50%),
+         ${p.bg}`
+      : `radial-gradient(ellipse at 18% 8%, ${withAlpha(p.lead,0.10)}, transparent 55%),
+         radial-gradient(ellipse at 88% 92%, ${withAlpha(p.active,0.06)}, transparent 50%),
+         linear-gradient(180deg, ${p.bg} 0%, ${p.paper2} 100%)`;
+  document.body.style.color = p.ink;
+}
+function withAlpha(hex, a){
+  if (hex.startsWith('rgb')) return hex.replace('rgb', 'rgba').replace(')', `,${a})`);
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function setSeg(id, v){
+  document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('on', b.dataset.v === v));
+}
+
+document.getElementById('t-pop').addEventListener('input', e => {
+  state.pop = +e.target.value;
+  document.getElementById('v-pop').textContent = state.pop;
+  rebuild();
+});
+document.getElementById('t-motion').addEventListener('input', e => {
+  state.motion = e.target.value / 100;
+  document.getElementById('v-motion').textContent =
+    state.motion < 0.18 ? 'still' : state.motion < 0.45 ? 'calm' : state.motion < 0.7 ? 'lively' : 'energetic';
+});
+document.getElementById('t-pulse').addEventListener('input', e => {
+  state.pulseRate = e.target.value / 100;
+  document.getElementById('v-pulse').textContent =
+    state.pulseRate < 0.15 ? 'quiet' : state.pulseRate < 0.45 ? 'steady' : state.pulseRate < 0.75 ? 'busy' : 'flooded';
+});
+document.querySelectorAll('#seg-bonds button').forEach(b => b.addEventListener('click', () => {
+  state.bondsMode = b.dataset.v; setSeg('seg-bonds', b.dataset.v);
+}));
+document.querySelectorAll('#seg-layout button').forEach(b => b.addEventListener('click', () => {
+  state.layout = b.dataset.v; setSeg('seg-layout', b.dataset.v);
+  rebuild();
+}));
+document.querySelectorAll('#seg-quotes button').forEach(b => b.addEventListener('click', () => {
+  state.quotesOn = b.dataset.v === 'on'; setSeg('seg-quotes', b.dataset.v);
+  if (!state.quotesOn) document.getElementById('floats').innerHTML = '';
+}));
+document.querySelectorAll('#swatches button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#swatches button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  applyPalette(b.dataset.v);
+}));
+
+const tweaksToggle = document.getElementById('tweaks-toggle');
+const tweaksPanel = document.getElementById('tweaks');
+tweaksToggle.addEventListener('click', () => {
+  const open = tweaksPanel.classList.toggle('shown');
+  tweaksToggle.classList.toggle('open', open);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    state.selected = null;
+    document.getElementById('detail').classList.remove('shown');
+    tweaksPanel.classList.remove('shown');
+    tweaksToggle.classList.remove('open');
+    closeInsights();
+  }
+  if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    togglePause();
+  }
+});
+
+/* ---------- pause / search / insights ---------- */
+const cmdEl = document.getElementById('cmd');
+const ppBtn = document.getElementById('pp-btn');
+const ppIcon = document.getElementById('pp-icon');
+const qInput = document.getElementById('q-input');
+const qSubmit = document.getElementById('q-submit');
+const insightsEl = document.getElementById('insights');
+const iTitle = document.getElementById('i-title');
+const iBody = document.getElementById('i-body');
+const iSrc = document.getElementById('i-src-count');
+const iMatch = document.getElementById('i-match-count');
+const iConnect = document.getElementById('i-connect');
+const iClose = document.getElementById('i-close');
+
+function setPpIcon(paused){
+  ppIcon.innerHTML = paused
+    ? '<polygon points="6,4 20,12 6,20"></polygon>'
+    : '<rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>';
+}
+function togglePause(){
+  state.paused = !state.paused;
+  cmdEl.classList.toggle('paused', state.paused);
+  setPpIcon(state.paused);
+  if (state.paused) setTimeout(() => qInput.focus(), 280);
+  else { qInput.value = ''; closeInsights(); }
+}
+ppBtn.addEventListener('click', togglePause);
+
+function scoreInsight(insight, q){
+  const words = q.toLowerCase().split(/[^a-z0-9\u2013\u2014\-]+/).filter(w => w.length > 1);
+  if (!words.length) return 0;
+  const hayKw = insight.keywords.join(' ');
+  const hayTitle = insight.title.toLowerCase();
+  const hayBody = insight.body.toLowerCase();
+  let s = 0;
+  for (const w of words) {
+    if (hayKw.includes(w)) s += 3;
+    if (hayTitle.includes(w)) s += 2.5;
+    if (hayBody.includes(w)) s += 1;
+  }
+  return s;
+}
+
+function findInsight(q){
+  let best = null, bestScore = 0;
+  for (const ins of INSIGHTS) {
+    const s = scoreInsight(ins, q);
+    if (s > bestScore) { bestScore = s; best = ins; }
+  }
+  return { insight: best, score: bestScore };
+}
+
+function buildMatchSet(insight){
+  const set = new Set();
+  const matchTags = new Set(insight.matchTags || []);
+  const matchKinds = new Set(insight.matchKinds || []);
+  for (let i = 0; i < state.nodes.length; i++) {
+    const n = state.nodes[i];
+    if (matchTags.has(n.tag)) set.add(i);
+    else if (matchKinds.has(n.kind) && Math.random() < 0.35) set.add(i);
+  }
+  // ensure at least 6 matched atoms by topping up with closest-kind nodes
+  if (set.size < 6) {
+    const candidates = state.nodes
+      .map((n,i) => ({ n, i }))
+      .filter(({i}) => !set.has(i))
+      .sort(() => Math.random() - 0.5);
+    for (const {i} of candidates) {
+      set.add(i);
+      if (set.size >= 8) break;
+    }
+  }
+  // order matched atoms by angle around center for a nice polyline
+  const cx = innerWidth/2, cy = innerHeight/2;
+  const ordered = [...set].sort((a, b) => {
+    const A = state.nodes[a], B = state.nodes[b];
+    return Math.atan2(A.y - cy, A.x - cx) - Math.atan2(B.y - cy, B.x - cx);
+  });
+  return { set, ordered };
+}
+
+function submitQuery(){
+  const q = qInput.value.trim();
+  if (!q) return;
+  const { insight, score } = findInsight(q);
+  let chosen = insight;
+  if (!chosen || score < 2) {
+    // fall back: search all insight bodies as a single corpus and pick highest token overlap
+    chosen = INSIGHTS[Math.floor(Math.random() * INSIGHTS.length)];
+  }
+  state.currentInsight = chosen;
+  const { set, ordered } = buildMatchSet(chosen);
+  state.matchSet = set;
+  state.matchOrder = ordered;
+  // populate panel
+  iTitle.textContent = chosen.title;
+  expandedMode = false;
+  insightsEl.classList.remove('expanded');
+  if (iExpandLabel) iExpandLabel.textContent = 'Expand';
+  renderInsightBody();
+  iSrc.textContent = String(8 + Math.floor(Math.random()*5));
+  iMatch.textContent = String(set.size);
+  state.connectionsOn = false;
+  iConnect.classList.remove('on');
+  iConnect.querySelector('svg').nextSibling.textContent = ' Show the Connections';
+  // hide cmd, show insights
+  cmdEl.classList.add('hidden');
+  insightsEl.classList.add('shown');
+  document.body.classList.add('insights-open');
+}
+
+function highlightQuery(body, q){
+  const words = q.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 3);
+  if (!words.length) return escapeHtml(body);
+  let html = escapeHtml(body);
+  for (const w of words) {
+    const re = new RegExp('\\b(' + w.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '[a-z]{0,3})\\b', 'gi');
+    html = html.replace(re, '<em>$1</em>');
+  }
+  return html;
+}
+function escapeHtml(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function closeInsights(){
+  insightsEl.classList.remove('shown');
+  document.body.classList.remove('insights-open');
+  state.connectionsOn = false;
+  state.matchSet = null;
+  state.matchOrder = [];
+  iConnect.classList.remove('on');
+  if (state.paused) cmdEl.classList.remove('hidden');
+}
+
+qSubmit.addEventListener('click', submitQuery);
+qInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); submitQuery(); }
+});
+iClose.addEventListener('click', () => {
+  closeInsights();
+  qInput.value = '';
+  expandedMode = false;
+  insightsEl.classList.remove('expanded');
+  if (iExpandLabel) iExpandLabel.textContent = 'Expand';
+  // Default behaviour: returning to play (resume dynamics). User can pause again to search.
+  if (state.paused) togglePause();
+});
+
+const iExpand = document.getElementById('i-expand');
+const iExpandLabel = document.getElementById('i-expand-label');
+const iCopy = document.getElementById('i-copy');
+const iCopyLabel = document.getElementById('i-copy-label');
+let expandedMode = false;
+
+function renderInsightBody(){
+  if (!state.currentInsight) return;
+  const ins = state.currentInsight;
+  const text = expandedMode ? (ins.bodyLong || ins.body) : ins.body;
+  const paragraphs = text.split(/\n\n+/);
+  const q = qInput.value.trim();
+  iBody.innerHTML = paragraphs.map(p => '<p>' + highlightQuery(p, q) + '</p>').join('');
+  insightsEl.classList.toggle('expanded', expandedMode);
+  iExpandLabel.textContent = expandedMode ? 'Collapse' : 'Expand';
+}
+
+iExpand.addEventListener('click', () => {
+  expandedMode = !expandedMode;
+  renderInsightBody();
+});
+
+iCopy.addEventListener('click', async () => {
+  if (!state.currentInsight) return;
+  const ins = state.currentInsight;
+  const body = expandedMode ? (ins.bodyLong || ins.body) : ins.body;
+  const text = ins.title + '\n\n' + body;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch {}
+    ta.remove();
+  }
+  iCopy.classList.add('copied');
+  iCopyLabel.textContent = 'Copied';
+  setTimeout(() => { iCopy.classList.remove('copied'); iCopyLabel.textContent = 'Copy'; }, 1600);
+});
+
+iConnect.addEventListener('click', () => {
+  state.connectionsOn = !state.connectionsOn;
+  iConnect.classList.toggle('on', state.connectionsOn);
+  // toggle button label text node (second child of button)
+  const txt = state.connectionsOn ? ' Hide the Connections' : ' Show the Connections';
+  // rebuild button content keeping svg
+  const svg = iConnect.querySelector('svg');
+  iConnect.innerHTML = '';
+  iConnect.appendChild(svg);
+  iConnect.appendChild(document.createTextNode(txt));
+});
+
+/* ---------- main ---------- */
+function rebuild(){ buildModel(); recomputeRegionalTargets(); }
+rebuild();
+
+let last = performance.now();
+function loop(now){
+  const dt = Math.min(33, now - last); last = now;
+  step(dt/16);
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
