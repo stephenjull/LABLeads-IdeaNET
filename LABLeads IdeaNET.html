@@ -436,6 +436,30 @@
     margin-top: 14px; padding-top: 12px;
     border-top: 1px dashed var(--paper-rule);
   }
+
+  /* Programme-context block — supplementary, visually distinct from transcript-derived body */
+  .programme-context {
+    margin-top: 14px; padding: 12px 14px 12px;
+    background: var(--paper-2);
+    border: 1px solid var(--paper-rule);
+    border-left: 2px solid var(--active);
+    border-radius: 3px;
+    font-family: 'Fraunces', serif; font-weight: 350; font-size: 14.5px;
+    line-height: 1.5; color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .programme-context .pc-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .programme-context .pc-eyebrow .dot {
+    display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--active);
+    box-shadow: 0 0 0 3px rgba(42,61,74,0.15);
+  }
+  .programme-context p { margin: 0; }
+  .programme-context p + p { margin-top: 8px; }
   .followups .label {
     font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
     letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
@@ -683,7 +707,7 @@
         <span class="stamp">v4 · field synthesis</span>
       </div>
       <div class="hdr-meta">
-        <div class="stat"><strong id="hStatSessions">3</strong>sessions · <strong id="hStatVoices">9</strong>voices · <strong id="hStatThemes">14</strong>themes</div>
+        <div class="stat"><strong id="hStatSessions">3</strong>sessions · <strong id="hStatVoices">9</strong>voices · <strong id="hStatThemes">17</strong>themes</div>
 
         <div class="view-toggle" id="viewToggle" role="tablist" aria-label="View">
           <button class="vt-btn on" data-view="docs" role="tab" aria-selected="true">
@@ -707,7 +731,7 @@
 
         <div class="panel themes-panel">
           <div class="eyebrow"><span class="dot"></span>Themes from the field</div>
-          <h4>14 ideas in motion</h4>
+          <h4>17 ideas in motion</h4>
           <div class="themes" id="themesList"></div>
         </div>
 

@@ -1,7 +1,11 @@
-// Auto-generated from anonymised transcripts.
+// Auto-generated from anonymised transcripts + curated pre-baked answers,
+// supplemented (where it deepens discussion) with the wider AI LCC programme context.
 // PII pass: participant first names redacted to [host] / [member] / [colleague];
 // institutions, small cities, network partners, and product names abstracted;
 // speaker tags carry role + region only. Safe for public commit.
+//
+// This file is fully self-contained. The IdeaNET console renders 100% from
+// this data — no network / API calls required.
 
 window.LABLEADS_DATA = {
   "sessions": [
@@ -625,72 +629,784 @@ window.LABLEADS_DATA = {
     {
       "id": "lab-leads",
       "label": "What lab leads do",
-      "query": "What do lab leads do — and just as importantly, what should they NOT do?"
+      "query": "What do lab leads do — and just as importantly, what should they NOT do?",
+      "keywords": [
+        "lab",
+        "lead",
+        "leads",
+        "mentor",
+        "mentoring",
+        "role",
+        "roles",
+        "catalyst",
+        "gatekeeper",
+        "gatekeepers",
+        "hierarchy",
+        "expert",
+        "experts",
+        "leadership",
+        "host",
+        "distribute",
+        "bottleneck",
+        "authority",
+        "authorities",
+        "tag",
+        "badge"
+      ],
+      "answer": {
+        "headline": "Catalysts, not gatekeepers — sitting in the community, not above it.",
+        "body": [
+          {
+            "p": "Across all three sessions the same picture forms: the lab has outgrown the single-host model. One person can't seed every conversation, validate every quiet contributor, and absorb the energy-cost of community management without burning out. Distribution is overdue."
+          },
+          {
+            "q": 2
+          },
+          {
+            "p": "The job description that kept returning was role-model, not authority. Lab leads model active participation, reach out to the quieter members who are doing strong work behind the scenes, and create the lightweight social structures that let the whole room move forward. They are explicitly not above the community — they are inside it, doing the work alongside everyone else."
+          },
+          {
+            "q": 3
+          },
+          {
+            "p": "A practical shape: 10 to 20 self-identified leads, lightly badged in the chat, distributed across regions and time zones. The host frames the role explicitly to head off any drift toward hierarchy — \"the first iteration on the name, but it may not be that in the end.\" The point is to make the system robust the moment no single failure point exists."
+          },
+          {
+            "q": 23
+          }
+        ],
+        "followUps": [
+          "How are lab leads recruited without it feeling like a promotion?",
+          "What would a lab lead actually do in a typical month?"
+        ],
+        "programmeContext": "The LABLeads programme sits inside the wider AI LCC — Teach For All's AI Literacy & Creator Collective. Across the AI LCC's 1,500+ members in 60+ countries, the lab is the advanced-prototyping sub-community — one of five (alongside Home, Claude Connect, Español, and Arabic). Distributing leadership across self-identified lab leads is the form the broader programme's peer-to-peer learning model takes in the advanced cohort."
+      }
     },
     {
       "id": "monthly-brief",
       "label": "Monthly briefs",
-      "query": "How would a monthly or bi-weekly brief work, and what problem does it solve?"
+      "query": "How would a monthly or bi-weekly brief work, and what problem does it solve?",
+      "keywords": [
+        "brief",
+        "briefs",
+        "monthly",
+        "biweekly",
+        "bi-weekly",
+        "challenge",
+        "challenges",
+        "direction",
+        "purpose",
+        "focus",
+        "project",
+        "projects",
+        "assignment",
+        "goal",
+        "goals",
+        "problem",
+        "problems",
+        "shared"
+      ],
+      "answer": {
+        "headline": "Direction without dictation — a real problem to point the lab at.",
+        "body": [
+          {
+            "p": "Members love the openness of the lab, but the openness has a failure mode: without a shared problem to point at, artifacts drift into the personal or the imaginary. People build for their own classroom, share it, and the thread ends — because nobody else has the same exact problem in front of them that week."
+          },
+          {
+            "q": 9
+          },
+          {
+            "p": "The fix is a monthly or bi-weekly brief — not a homework assignment, a real, somewhat universal problem framed openly enough that creators in different contexts can interpret it through their own work. Campus orientation. Formative classroom assessment. A curriculum gap nobody has addressed yet. People choose to engage or skip, work solo or in small groups, and bring back artifacts that all answer the same underlying question in different ways."
+          },
+          {
+            "q": 8
+          },
+          {
+            "p": "The value is in the comparison. When five educators in five countries respond to the same brief, the lab can see what travels and what is locally bound — which is exactly the kind of insight no one of them could produce alone. The brief gives direction without dictating, and the artifacts become a corpus instead of a scatter."
+          }
+        ],
+        "followUps": [
+          "Who writes the brief, and how do they pick the problem?",
+          "What's a good cadence — monthly, bi-weekly, or just \"when it makes sense\"?"
+        ]
+      }
     },
     {
       "id": "workshops",
       "label": "Workshops + homework",
-      "query": "How can workshops be structured so the learning actually sticks?"
+      "query": "How can workshops be structured so the learning actually sticks?",
+      "keywords": [
+        "workshop",
+        "workshops",
+        "training",
+        "session",
+        "sessions",
+        "homework",
+        "cohort",
+        "learn",
+        "learning",
+        "teach",
+        "teaching",
+        "curriculum",
+        "feedback",
+        "practice",
+        "course",
+        "courseware"
+      ],
+      "answer": {
+        "headline": "Workshops land deeper when there's homework between them.",
+        "body": [
+          {
+            "p": "Existing AI workshops — even good ones — tend to dead-end at \"here's information, now go do something.\" Participants leave inspired but isolated, and most of what they learned evaporates within a week because there's no next step that pulls them back."
+          },
+          {
+            "p": "Members described a different loop. The first workshop introduces a concept; participants take homework into their own context — a class, a brief, a prompt to try. The second session, a week later, is dedicated to feedback on what people actually built. Not certifications. Not lectures. A tight loop — input, attempt, critique, attempt again — which is how skilled practice actually develops in any domain."
+          },
+          {
+            "q": 11
+          },
+          {
+            "p": "Anthropic's courseware works perfectly as scaffolding for the input phase. What the lab uniquely provides is the practice and the peers: a small enough audience that critique can be specific and kind, a diverse enough audience that the feedback expands what's possible. Lab leads host the second session and keep the conversation honest."
+          }
+        ],
+        "followUps": [
+          "How would the homework be set without it feeling like school?",
+          "Who facilitates the feedback session, and how is it kept psychologically safe?"
+        ],
+        "programmeContext": "The wider AI LCC already runs Live Learning sessions — nearly 300 attended the inaugural one. The workshop-plus-homework loop members described here is what would translate those large input sessions into the kind of small-group practice the lab specifically needs."
+      }
     },
     {
       "id": "small-groups",
       "label": "Smaller groups",
-      "query": "Why do smaller breakout groups matter, and how should they be organised?"
+      "query": "Why do smaller breakout groups matter, and how should they be organised?",
+      "keywords": [
+        "small",
+        "smaller",
+        "group",
+        "groups",
+        "breakout",
+        "breakouts",
+        "feedback",
+        "context",
+        "intimate",
+        "chat",
+        "whatsapp",
+        "channel",
+        "subgroup",
+        "subgroups"
+      ],
+      "answer": {
+        "headline": "Smaller rooms lower the social cost of posting.",
+        "body": [
+          {
+            "p": "The main chat works, but it has a known failure mode: many of the most active contributors are working hard behind the scenes — building, experimenting, learning fast — and never bring their work to the full group. The social cost of posting in a large channel is high, especially for newer members or anyone who feels their idea isn't ready yet."
+          },
+          {
+            "q": 18
+          },
+          {
+            "p": "Smaller breakouts dramatically lower that cost. Grouping by a week's topic (assessment, agents, video, classroom orchestration), by working language, or by phase of project means the audience is contextual: people who already share your frame, who can give specific feedback rather than generic encouragement. The conversation tightens, and quieter members start to surface because the room finally feels like the right size for their idea."
+          },
+          {
+            "q": 17
+          },
+          {
+            "p": "The lab leads' job in a breakout isn't to talk — it's to host. Make sure everyone gets a turn, ask the question that draws someone out, and summarize back to the full lab what the small group decided. The whole becomes more than the chat."
+          }
+        ],
+        "followUps": [
+          "How big is too big? Three people, ten, twenty?",
+          "Do small groups stay together, or recompose each cycle?"
+        ],
+        "programmeContext": "This matches a pattern the wider AI LCC has formalised structurally: five distinct sub-communities (Home, Claude Connect, Claude LAB, Español, Arabic) that each create a different scale of conversation. Breakouts inside the lab would be the next zoom level inside that — same logic, finer grain."
+      }
     },
     {
       "id": "expertise",
       "label": "Who to DM",
-      "query": "How do members know who to reach out to for technical help?"
+      "query": "How do members know who to reach out to for technical help?",
+      "keywords": [
+        "expertise",
+        "expert",
+        "experts",
+        "skill",
+        "skills",
+        "directory",
+        "badge",
+        "badges",
+        "versed",
+        "dm",
+        "direct",
+        "message",
+        "reach",
+        "contact",
+        "technical",
+        "bug",
+        "help",
+        "support",
+        "who",
+        "whose"
+      ],
+      "answer": {
+        "headline": "A community-maintained map of who's versed in what.",
+        "body": [
+          {
+            "p": "The lab is moving up the stack. Members who started with prompts and artifacts are now shipping apps, websites, agents with tool use, MCP integrations. The questions they're asking are increasingly technical, and a generic post in the main chat is often the wrong place to ask them — too noisy, too slow, too easily missed."
+          },
+          {
+            "q": 20
+          },
+          {
+            "p": "What works better is a quick DM to someone who has already solved the same problem. Lab leads can be informally badged by what they have actually built or fixed: prompting, agents, classroom orchestration, video, fine-tuning, deployment. Anyone hitting a wall knows whose handle to type first — and the lead either answers or routes the question to whoever can."
+          },
+          {
+            "q": 19
+          },
+          {
+            "p": "The point is explicitly not formal credentials. The lab doesn't want to become a certification body. What it needs is a community-maintained map of who is versed in what, updated as people's practice evolves — a directory that respects the fact that expertise here is built by doing."
+          }
+        ],
+        "followUps": [
+          "Who maintains the expertise map, and how often is it refreshed?",
+          "What stops badging from drifting into a status hierarchy?"
+        ],
+        "programmeContext": "The wider AI LCC tracks roughly 20 innovation themes across the network — from agentic workflows to multilingual capability, from frugal AI on feature phones to assessment redesign. A lab expertise directory could mirror that thematic structure so members know which lab lead is closest to their thread."
+      }
     },
     {
       "id": "cross-country",
       "label": "Cross-country pairing",
-      "query": "How can the lab connect creators across countries who are working on similar problems?"
+      "query": "How can the lab connect creators across countries who are working on similar problems?",
+      "keywords": [
+        "country",
+        "countries",
+        "cross",
+        "global",
+        "international",
+        "local",
+        "context",
+        "culture",
+        "cultural",
+        "translation",
+        "language",
+        "languages",
+        "iceland",
+        "examined",
+        "marking",
+        "assessment"
+      ],
+      "answer": {
+        "headline": "Different countries, same underlying questions.",
+        "body": [
+          {
+            "p": "Educators in completely unconnected geographies keep arriving at the same fundamental problems — only the local constraints are different. A teacher inside a heavily-examined system, a teacher in a formative-assessment one, a teacher navigating a curriculum review: their assessment questions look totally different on the surface and turn out to be the same underneath."
+          },
+          {
+            "q": 13
+          },
+          {
+            "p": "The artifacts don't translate cleanly across these contexts — an assessment tool built for one system can be illegal or pedagogically inappropriate in another. But the underlying questions about marking, feedback, learning evidence, and student trust are universal, and the dialogue between two educators with different constraints is more useful than either of them comparing notes with a local colleague who shares all their assumptions."
+          },
+          {
+            "q": 21
+          },
+          {
+            "p": "Pairing creators across countries on a single brief is how the lab makes this productive. It surfaces what travels and what doesn't, and produces a body of work no single national context could generate on its own."
+          }
+        ],
+        "followUps": [
+          "How are cross-country pairs matched — by topic, by phase, or randomly?",
+          "What's the lightest format that makes the pairing actually useful?"
+        ],
+        "programmeContext": "The wider AI LCC spans 60+ countries with strong representation across Africa, Asia-Pacific, Latin America, Europe, and the Middle East. The community already shows artifacts travelling across regions — a phonics generator from one classroom in West Africa inspiring a climate analyzer in East Africa, then an emotion-mapping tool in Latin America. Cross-country pairing inside the lab would formalise what is already happening organically across the wider network."
+      }
     },
     {
       "id": "research",
       "label": "University partnerships",
-      "query": "How could universities help generate the evidence base the field is missing?"
+      "query": "How could universities help generate the evidence base the field is missing?",
+      "keywords": [
+        "research",
+        "university",
+        "universities",
+        "academic",
+        "evidence",
+        "data",
+        "study",
+        "studies",
+        "partner",
+        "partners",
+        "partnership",
+        "impact",
+        "outcomes",
+        "k-12",
+        "k12",
+        "longitudinal"
+      ],
+      "answer": {
+        "headline": "Universities can give the lab the evidence it doesn't have yet.",
+        "body": [
+          {
+            "p": "Independent reviews of AI in K-12 keep landing on the same conclusion: the evidence base is weak. Not because the work isn't happening — the lab is proof that thoughtful classroom practice is everywhere — but because almost no one is measuring it in a way that academic, policy, or media reviewers will accept."
+          },
+          {
+            "q": 15
+          },
+          {
+            "p": "Lab leads who straddle classroom and university are unusually well-positioned to broker the partnership that fixes this. The lab provides the practice, the artifacts, the diversity of contexts, and the willingness to be studied. The university partner provides the methodology, the IRB process, the longitudinal frame, and the credibility that the rest of the system listens for."
+          },
+          {
+            "p": "The community doesn't have to carry the evidence base alone — it has to be willing to open up to research. That is a tradeoff: more documentation, more consent processes, more visibility. But the alternative is letting the next outside review continue to conclude that nobody has shown anything works."
+          }
+        ],
+        "followUps": [
+          "Which university partners are realistic starting points?",
+          "What can the lab document NOW so future research has clean baseline data?"
+        ],
+        "programmeContext": "Teach For All's AI strategy frames this directly: every initiative passes an ESSI test — Equity, Scale, Sustainability, Impact. The Impact dimension specifically asks whether work \"demonstrably improves educational outcomes in ways communities themselves value.\" University partnerships brokered by lab leads are one way the lab supplies the evidence the framework asks for."
+      }
     },
     {
       "id": "privacy",
       "label": "Privacy & compliance",
-      "query": "What are members worried about when it comes to privacy and student data?"
+      "query": "What are members worried about when it comes to privacy and student data?",
+      "keywords": [
+        "privacy",
+        "compliance",
+        "gdpr",
+        "legal",
+        "legislation",
+        "data",
+        "student",
+        "id",
+        "anonymous",
+        "anonymise",
+        "anonymize",
+        "consent",
+        "regulation",
+        "classroom",
+        "safeguarding"
+      ],
+      "answer": {
+        "headline": "Privacy is a community problem, not a personal one.",
+        "body": [
+          {
+            "p": "As soon as an artifact moves from one classroom to a district, a country, or another country, the privacy questions multiply. Which legislation applies? Whose data is in play — the teacher's, the student's, the parent's? What has to be anonymised before anything is shared, and what counts as anonymised in the first place? The cross-jurisdictional version of this problem is genuinely hard, and no individual creator is a compliance expert."
+          },
+          {
+            "q": 16
+          },
+          {
+            "p": "Trying to figure it out alone is paralysing — and the most common outcome is that the artifact never leaves the original classroom, even when it should. The lab has practical patterns that work: use a fabricated student ID, separate data from identifiers, document what you collected and why, default to the strictest jurisdiction in the room. These aren't legal advice, they're working defaults that let people move forward."
+          },
+          {
+            "p": "But lab leads can also surface this upward. A pattern of compliance questions across the community is a coordinated ask — to partners, to legal communities, to research collaborators — not 200 individual creators each trying to get clarity in their inbox. Treating compliance as a community problem rather than a personal one is what unlocks scale."
+          }
+        ],
+        "followUps": [
+          "What's a minimum-viable privacy checklist for sharing an artifact?",
+          "Who in the network has the legal context the lab can borrow?"
+        ],
+        "programmeContext": "The wider programme treats this as a community problem too: \"Safe, Fair, and Responsible AI Use\" is one of the AI LCC's 20 named innovation themes, alongside Data & Security Literacy. The lab is well-placed to generate the working defaults that the rest of the network can adopt."
+      }
     },
     {
       "id": "escalation",
       "label": "Scaling an artifact",
-      "query": "How does an artifact built in one classroom escalate to many?"
+      "query": "How does an artifact built in one classroom escalate to many?",
+      "keywords": [
+        "escalate",
+        "escalation",
+        "scale",
+        "scaling",
+        "grow",
+        "share",
+        "repository",
+        "repo",
+        "colleagues",
+        "students",
+        "school",
+        "schools",
+        "district",
+        "government",
+        "ministry",
+        "pitch",
+        "travel"
+      ],
+      "answer": {
+        "headline": "From one classroom to many — but the path is currently manual.",
+        "body": [
+          {
+            "p": "An artifact built for forty children can become a method for hundreds — sometimes thousands — if someone helps lift it out. The lab is already full of cases where this is happening informally: teachers presenting to their colleagues, pitching ministries, watching their own students build apps that other schools adopt. The escalation pathway exists, but it is manual and uneven, and most artifacts that could travel don't."
+          },
+          {
+            "q": 4
+          },
+          {
+            "p": "What's missing is a shared repository, the way STEAM education has one, that any teacher in the network can pull from and contribute to. Not a curated app store with editors and gatekeepers — a living collection that surfaces what other practitioners have actually used, in what contexts, with what caveats. The artifact carries its own provenance: who built it, who tested it, what changed."
+          },
+          {
+            "q": 1
+          },
+          {
+            "p": "Lab leads sit in the middle of this. Their role is to identify which artifacts are ready to travel — not the polished ones necessarily, but the ones whose method generalizes — and to pair them with the people who can move them: a teacher in another country, a researcher who can validate it, a policymaker who needs a concrete example."
+          }
+        ],
+        "followUps": [
+          "What's the minimum metadata an artifact needs to be \"escalation-ready\"?",
+          "Who decides what travels — the author, lab leads, or the network?"
+        ],
+        "programmeContext": "The wider AI LCC already shows artifacts travelling — a phonics generator built for an underserved learner context in one country becomes the seed for a climate-data analyzer in another. Without a shared repository this is mostly word-of-mouth. The lab is the natural place to prototype what 'escalation-ready' actually looks like in metadata, provenance, and consent."
+      }
     },
     {
       "id": "anthropic",
       "label": "Anthropic direct line",
-      "query": "What would a direct line to Anthropic look like, and what would it be used for?"
+      "query": "What would a direct line to Anthropic look like, and what would it be used for?",
+      "keywords": [
+        "anthropic",
+        "partner",
+        "upstream",
+        "company",
+        "companies",
+        "support",
+        "pilot",
+        "pilots",
+        "feature",
+        "features",
+        "feedback",
+        "model",
+        "api",
+        "contact"
+      ],
+      "answer": {
+        "headline": "A direct line for coordinated asks, not 200 individual inboxes.",
+        "body": [
+          {
+            "p": "Anthropic is already paying attention to the lab. The opportunity — raised explicitly in the conversations — is to make the channel two-way, more structured, and more useful for both sides. Right now feedback flows up in scattered ways: an individual DM, a comment in a workshop, a question that bubbles into a session. Most of it doesn't aggregate into anything Anthropic can act on."
+          },
+          {
+            "q": 26
+          },
+          {
+            "p": "A coordinated channel changes that. When a small group of lab leads is actively pursuing the same problem — classroom privacy, local-language fine-tuning, video pipelines, agent reliability — the lab can package the request as a single coherent thread rather than as fifty individual asks. Anthropic gets a clearer signal about where investment matters; the lab gets faster and more substantive answers."
+          },
+          {
+            "p": "The practical shape: each lab lead owns a thread, with a named counterpart inside Anthropic who keeps the conversation moving on the other side. Not a formal partnership — just a connective tissue that respects both sides' time and makes the work easier to coordinate."
+          }
+        ],
+        "followUps": [
+          "Which three threads are most worth opening first?",
+          "What would Anthropic actually commit to on the other side of the table?"
+        ],
+        "programmeContext": "This is the LABLeads version of the wider AI LCC's reciprocal-influence model with foundation model companies. Across the network, educators are already proposing technical specifications, identifying edge cases, and contributing to product roadmaps with the major AI labs. A coordinated channel from the lab would feed that pipeline with the specific, deep-context asks the advanced cohort generates."
+      }
     },
     {
       "id": "onboarding",
       "label": "Onboarding fixes",
-      "query": "What broke in onboarding, and how should it be redesigned?"
+      "query": "What broke in onboarding, and how should it be redesigned?",
+      "keywords": [
+        "onboard",
+        "onboarding",
+        "apply",
+        "application",
+        "approval",
+        "process",
+        "join",
+        "joining",
+        "fellow",
+        "alumni",
+        "wait",
+        "response",
+        "invite",
+        "invitation",
+        "access",
+        "pro",
+        "license",
+        "activation"
+      ],
+      "answer": {
+        "headline": "Fix the cracks so applicants don't fall through.",
+        "body": [
+          {
+            "p": "Several promising applicants applied to the lab earlier and never heard back — a hiccup in the approval pipeline that traces directly back to the single-host problem. When one person is running intake, community management, and programming all at once, applications fall through the cracks, and the people most affected are exactly the people the lab most wants: motivated outsiders who took a risk to apply."
+          },
+          {
+            "q": 27
+          },
+          {
+            "p": "The fix is structural, not procedural. A clear onboarding cohort — say, a small group welcomed together every two or four weeks — means new members arrive with peers and a shared starting context rather than dropping into a noisy chat. A fast-track lane for referrals from existing members preserves quality without slowing entry. Lab leads can co-host the welcome, share the load of orientation, and make sure no application sits unanswered for months."
+          },
+          {
+            "p": "The onboarding experience is also the first signal a new member receives about whether the lab takes them seriously. Getting it right — fast, warm, contextual — dramatically raises the chance they will go on to contribute."
+          }
+        ],
+        "followUps": [
+          "What does week one in the lab look like for a brand new member?",
+          "Who picks up an application when it lands? Lab lead by region, or shared queue?"
+        ]
+      }
     },
     {
       "id": "levels",
       "label": "Beginner / advanced",
-      "query": "How should the lab handle the question of skill levels without becoming a credentialing body?"
+      "query": "How should the lab handle the question of skill levels without becoming a credentialing body?",
+      "keywords": [
+        "level",
+        "levels",
+        "beginner",
+        "intermediate",
+        "advanced",
+        "progress",
+        "progression",
+        "skill",
+        "self",
+        "identify",
+        "place",
+        "placement",
+        "tier",
+        "tiers",
+        "rank",
+        "where"
+      ],
+      "answer": {
+        "headline": "Light-touch self-placement, not a credentialing ladder.",
+        "body": [
+          {
+            "p": "Newer creators kept raising the same uncertainty: where do I sit — beginner, intermediate, advanced? It sounds like a small question, but it shapes everything downstream — which sessions to attend, who to ask for help, which artifacts to attempt, whether to post in the main chat or wait until things feel more ready."
+          },
+          {
+            "q": 12
+          },
+          {
+            "p": "Lab leads don't need to introduce formal levels — the moment the lab starts grading members, it becomes a different kind of community. But a lightweight self-placement, paired with the expertise directory, gives people a frame: I am intermediate on prompting, beginner on agents, working toward classroom deployment. Now the social map has axes, and the right questions can be asked of the right people."
+          },
+          {
+            "q": 22
+          },
+          {
+            "p": "The goal is orientation, not certification. People should be able to update their own placement freely as they grow, and lab leads should resist any drift toward turning the lab into a credentialing pipeline. The lab's strength is that it is a community of practitioners — the levels are scaffolding, not gates."
+          }
+        ],
+        "followUps": [
+          "What are the axes of self-placement — tools, contexts, output types?",
+          "How is the framing kept from feeling like a competitive ranking?"
+        ],
+        "programmeContext": "The AI LCC speaks of a progression pathway — from literacy, to creator, to innovator. The lab is where that progression's late stages happen. Self-placement inside the lab works best when it nests inside that broader frame: the lab is for people moving from creator to innovator, and the levels describe distance along that arc, not a ranking."
+      }
     },
     {
       "id": "quiet-voices",
       "label": "The quiet contributors",
-      "query": "Who are the quiet contributors and how does the lab make space for them?"
+      "query": "Who are the quiet contributors and how does the lab make space for them?",
+      "keywords": [
+        "quiet",
+        "lurk",
+        "lurker",
+        "lurkers",
+        "listener",
+        "listeners",
+        "silent",
+        "shy",
+        "invisible",
+        "behind",
+        "scenes",
+        "water",
+        "ocean",
+        "newcomer"
+      ],
+      "answer": {
+        "headline": "The quiet contributors are doing the work — the lab just doesn't see them yet.",
+        "body": [
+          {
+            "p": "A recurring observation across the sessions: a lot of the most active learners in the lab are working hard behind the scenes and never bringing their work to the full group. They read every thread, save every shared video, and try things in their own classroom — but the social cost of posting in the main chat is too high for them to surface easily."
+          },
+          {
+            "q": 5
+          },
+          {
+            "p": "The metaphors that surfaced for these members were vivid — \"standing by the ocean,\" \"getting my leg in the water.\" The point is not that they are uninterested; it is that the room as currently structured does not yet feel like the right size for their idea."
+          },
+          {
+            "q": 7
+          },
+          {
+            "p": "Two design moves help. First, smaller contextual breakouts that lower the social cost of speaking up. Second, a deliberate outreach habit by lab leads — direct messages to members doing strong work who haven't yet posted, with a specific invitation rather than a generic \"come share.\" The cost is small; the impact on community texture is large."
+          },
+          {
+            "q": 3
+          }
+        ],
+        "followUps": [
+          "What's a kind, specific opening DM for a quiet contributor?",
+          "How does the lab measure whether quiet voices are actually surfacing?"
+        ]
+      }
     },
     {
       "id": "moment",
       "label": "This moment in history",
-      "query": "Why is this moment in education unusual, and what does that mean for the lab?"
+      "query": "Why is this moment in education unusual, and what does that mean for the lab?",
+      "keywords": [
+        "moment",
+        "history",
+        "historical",
+        "curriculum",
+        "change",
+        "transformation",
+        "pedagogy",
+        "world",
+        "time",
+        "now",
+        "era"
+      ],
+      "answer": {
+        "headline": "Every curriculum is changing at once — and the lab is small enough to act on it.",
+        "body": [
+          {
+            "p": "This is the only time in living memory when every country's curriculum, pedagogy, and assessment practice is in motion at the same time. Usually education changes one system at a time, slowly, in isolation from peer systems elsewhere. Right now, every system is reconsidering itself simultaneously, and most are doing so without much access to what other systems are learning."
+          },
+          {
+            "q": 25
+          },
+          {
+            "p": "A teacher in Kenya, a teacher in the UK, a teacher in Catalonia are wrestling with the same functional dilemma — how AI changes what learning evidence looks like, what assessment can mean, what teachers spend their time on — inside completely different policy contexts. The functional questions are universal even when the policy answers are local."
+          },
+          {
+            "q": 6
+          },
+          {
+            "p": "The lab is small enough to be coherent and connected enough to span the change in near real time. That combination — small enough to act, connected enough to compare — is the moment's real opportunity. Treating it as a working consortium rather than a chat community is what would let it punch above its size."
+          }
+        ],
+        "followUps": [
+          "What does the lab capture about this moment that would be lost otherwise?",
+          "Which decisions in front of the lab right now are time-sensitive?"
+        ],
+        "programmeContext": "Teach For All names this moment 'the disintermediation of education' — the first time in history when learners and teachers everywhere can access sophisticated educational tools on their own terms, bypassing institutional gatekeepers. The lab is what that disintermediation looks like at the working edge — educators in 60+ countries acting as co-architects of the tools, not consumers of them."
+      }
+    },
+    {
+      "id": "ai-lcc",
+      "label": "What is the AI LCC?",
+      "query": "What is the wider AI LCC programme, and where does the lab sit inside it?",
+      "keywords": [
+        "ai",
+        "lcc",
+        "collective",
+        "community",
+        "programme",
+        "program",
+        "network",
+        "teach",
+        "all",
+        "wider",
+        "overview",
+        "about",
+        "what"
+      ],
+      "answer": {
+        "headline": "A global creator collective — and the lab is its advanced edge.",
+        "body": [
+          {
+            "p": "The AI Literacy & Creator Collective (AI LCC) is Teach For All's flagship community for educator-led AI work. Launched in late 2025, it has grown to 1,500+ members across 60+ countries — K-12 teachers, researchers, NGO founders, school leaders, instructional designers — organised into five sub-communities: a general Home channel, Claude Connect (engagement with Anthropic), Claude LAB (advanced prototyping), Español, and Arabic."
+          },
+          {
+            "p": "Activity across the AI LCC is unusually weighted toward making rather than chatting — roughly 19% of community content is technical or pedagogical innovation, several times the typical 5-10% for online communities. The conversation spans 20 named innovation themes, from agentic workflows and multilingual capability to frugal AI on feature phones and assessment redesign."
+          },
+          {
+            "p": "The lab — what these conversations are about — is the AI LCC's advanced prototyping sub-community. It's where the programme's progression pathway (literacy → creator → innovator) reaches its late stages. The LABLeads idea is the structural response to that maturity: distribute leadership across the advanced cohort so the work continues to scale without bottlenecking on a single host."
+          }
+        ],
+        "followUps": [
+          "How is the lab different from the other AI LCC sub-communities?",
+          "What kinds of artefacts are members building across the AI LCC?"
+        ]
+      }
+    },
+    {
+      "id": "agency-model",
+      "label": "Dependency to agency",
+      "query": "What is the dependency-to-agency model the wider programme is built on?",
+      "keywords": [
+        "dependency",
+        "agency",
+        "model",
+        "co-architect",
+        "coarchitect",
+        "sovereignty",
+        "pedagogical",
+        "consumer",
+        "consumers",
+        "creator",
+        "creators",
+        "capacity",
+        "colonial",
+        "dependence"
+      ],
+      "answer": {
+        "headline": "From consumers of distant tools to co-architects of their own.",
+        "body": [
+          {
+            "p": "The AI LCC operationalises a theory of change Teach For All calls the dependency-to-agency model. The frame is direct: traditional EdTech creates dependency — distant companies build tools for teachers and contexts they don't fully understand, and capacity flows outward to suppliers rather than inward to communities. AI threatens to accelerate this at unprecedented scale unless someone intervenes."
+          },
+          {
+            "p": "The lab is the working version of the alternative. Members are not asking foundation model companies for better products — they are designing, building, and deploying classroom artefacts themselves, then feeding what they learn back upstream. The principle the programme names underneath this is educational sovereignty: communities harness foundation model capabilities while maintaining control over pedagogical values and local knowledge systems."
+          },
+          {
+            "p": "Every initiative across the wider programme passes the ESSI test — Equity, Scale, Sustainability, Impact. The dependency-to-agency framing is what makes those four dimensions cohere: equity means underserved communities participate as creators and decision-makers, not just consumers; sustainability means building local capacity rather than new dependencies; scale means a peer-to-peer model rather than a top-down rollout; impact means outcomes that matter to communities themselves."
+          }
+        ],
+        "followUps": [
+          "How does the ESSI test apply to a specific artefact?",
+          "What does educational sovereignty look like in practice?"
+        ],
+        "programmeContext": "The lab's job inside this frame is concrete: keep producing artefacts and methods that demonstrate agency at the working edge, and surface the patterns upstream so other AI LCC sub-communities can adopt them."
+      }
+    },
+    {
+      "id": "reciprocal",
+      "label": "Reciprocal influence with the labs",
+      "query": "How does the reciprocal influence model with the foundation model companies actually work?",
+      "keywords": [
+        "reciprocal",
+        "influence",
+        "foundation",
+        "model",
+        "companies",
+        "partner",
+        "partners",
+        "anthropic",
+        "openai",
+        "google",
+        "meta",
+        "gemini",
+        "claude",
+        "roadmap",
+        "upstream",
+        "feedback",
+        "co-create"
+      ],
+      "answer": {
+        "headline": "Teachers shape the roadmap; the labs supply tools and responsiveness.",
+        "body": [
+          {
+            "p": "The wider AI LCC's relationship with foundation model companies — Anthropic, OpenAI, Google, Meta — is structured as reciprocal influence rather than traditional professional development. Knowledge does not flow one direction. Educators provide ground-level classroom feedback, cultural knowledge, and edge cases that directly shape how foundation models evolve. The labs supply resources, tooling, and access to development teams, plus genuine responsiveness to what comes back from the network."
+          },
+          {
+            "p": "This is what the conversations point at when members talk about a direct line to Anthropic. Inside the lab, the proposal is concrete: a small group of lab leads owns specific threads — privacy compliance, local-language tuning, video pipelines, agent reliability — with a named counterpart at Anthropic on the other side keeping each conversation moving. Not a formal partnership; just connective tissue that respects both sides' time."
+          },
+          {
+            "p": "Across the wider AI LCC this is already happening organically. Members propose technical specifications, identify edge cases, and contribute to roadmaps across multiple foundation model companies. The lab's coordinated channel would aggregate the advanced cohort's signal — packaging the network's deep, specific asks instead of scattering them across individual DMs."
+          }
+        ],
+        "followUps": [
+          "Which threads should the lab open first with Anthropic?",
+          "What does the lab owe back to the partner labs?"
+        ]
+      }
     }
   ],
   "keyQuotes": [
@@ -756,7 +1472,7 @@ window.LABLEADS_DATA = {
     },
     {
       "source": "Lab member · Catalonia",
-      "text": "the a recent independent K-12 AI review — that's very weak evidence in AI in K-12. Maybe some of these artifacts or apps you are building could help in collaboration with universities."
+      "text": "a recent independent K-12 AI review — that's very weak evidence in AI in K-12. Maybe some of these artifacts or apps you are building could help in collaboration with universities."
     },
     {
       "source": "Lab member · Catalonia",
@@ -834,6 +1550,10 @@ window.LABLEADS_DATA = {
       {
         "label": "Bigger asks, coordinated upstream",
         "body": "Privacy compliance, evidence at scale, local-language tuning — none of these are problems any individual creator can solve in their inbox. Lab leads can package these as coordinated asks to partners like universities and Anthropic, with one named counterpart on each side keeping the conversation moving."
+      },
+      {
+        "label": "Inside a wider programme of agency",
+        "body": "Underneath the lab sits Teach For All's broader AI LCC — 1,500+ educators across 60+ countries, organised around a dependency-to-agency theory of change. The lab is that programme's advanced edge. Distributing leadership through LABLeads is what lets the working edge continue scaling without bottlenecking on a single host."
       }
     ],
     "closing": "Underneath all of it sits the moment itself. This is the only time in living memory when every country's curriculum, pedagogy, and assessment practice is in motion at once. The lab is small enough to be coherent and connected enough to span the change — that combination is the opportunity."

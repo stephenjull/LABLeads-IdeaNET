@@ -191,94 +191,69 @@
     return s;
   }
 
-  // ---------- LLM-powered query
-  // Prompt format produces a parseable response we render as a rich card.
-  function buildPrompt(question) {
-    return `You are the synthesiser for LABLeads IdeaNET — a research console for a community of practice.
+  // ---------- LOCAL MATCHER (self-contained — no API calls)
+  // English stopwords we drop from query before matching
+  const STOPWORDS = new Set('a an the and or but if then so as is are was were be been being do does did have has had of in on at to from with for by about into over out up down it its this that these those i you he she we they them us my your his her our their what who which when where why how can could would should may might will shall just also some any all more most less very really maybe might quite kind sort'.split(/\s+/));
 
-Below are three real conversations (anonymised — participant names replaced with role tags such as [Host], [Lab member · Bangladesh]). They happened between the programme host and members of the LABLeads community about the future of the programme.
-
-CORPUS:
-"""${DATA.corpus}"""
-
-USER QUESTION:
-"${question}"
-
-Answer in 150–280 words, drawing only on what's actually in the corpus. Be specific to these conversations — avoid generic statements about online communities. Use British English. Write thoughtfully, not as a bulleted list.
-
-Embed 2–3 short verbatim pull-quotes from the corpus as their own lines, formatted EXACTLY like this:
-> "exact quote, 6–20 words" — Lab member · Country
-
-Then output one blank line and the literal text:
-FOLLOW-UPS:
-- First follow-up question (under 14 words)
-- Second follow-up question (under 14 words)
-
-Begin your answer with one line containing a short, vivid headline (a sentence under 12 words), prefixed exactly:
-HEADLINE: …
-
-Then a blank line, then the body, then the FOLLOW-UPS block. No other prefaces, no other section labels.`;
+  function tokenize(s) {
+    return (s || '').toLowerCase()
+      .replace(/[^a-z0-9\-]+/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 1 && !STOPWORDS.has(w));
   }
 
-  // Parse the model's structured response
-  function parseAnswer(text) {
-    const out = { headline: '', body: '', quotes: [], followUps: [] };
-    if (!text) return out;
-    text = text.replace(/^```[a-z]*\n?/i, '').replace(/```\s*$/, '').trim();
-
-    // headline
-    const hm = text.match(/^\s*HEADLINE:\s*(.+?)\s*$/m);
-    if (hm) {
-      out.headline = hm[1].trim().replace(/^["“]|["”]$/g, '');
-      text = text.slice(hm.index + hm[0].length).trim();
+  function scoreTheme(theme, tokens) {
+    if (!tokens.length) return 0;
+    const kw = new Set(theme.keywords || []);
+    const label = (theme.label || '').toLowerCase();
+    const headline = (theme.answer?.headline || '').toLowerCase();
+    let score = 0;
+    for (const t of tokens) {
+      if (kw.has(t)) score += 4;
+      if (label.includes(t)) score += 2;
+      if (headline.includes(t)) score += 1;
     }
+    return score;
+  }
 
-    // follow-ups
-    const fi = text.search(/^FOLLOW[- ]UPS?:/im);
-    if (fi >= 0) {
-      const before = text.slice(0, fi).trim();
-      const after = text.slice(fi).replace(/^FOLLOW[- ]UPS?:/i, '').trim();
-      text = before;
-      out.followUps = after.split('\n')
-        .map(l => l.replace(/^\s*[-*•\d.)]\s*/, '').trim())
-        .filter(l => l.length > 0)
-        .slice(0, 3);
+  function matchThemes(query) {
+    const tokens = tokenize(query);
+    const ranked = DATA.themes
+      .map(t => ({ theme: t, score: scoreTheme(t, tokens) }))
+      .sort((a, b) => b.score - a.score);
+    return { ranked, tokens };
+  }
+
+  // ---------- run a query (local match — no API call)
+  function runQuery(question, opts = {}) {
+    if (!question || !question.trim()) return;
+    question = question.trim();
+
+    if (opts.themeId) markActiveTheme(opts.themeId);
+    else markActiveTheme(null);
+
+    // Direct theme lookup when a theme chip triggered this query
+    let chosen = null;
+    if (opts.themeId) {
+      chosen = DATA.themes.find(t => t.id === opts.themeId) || null;
     }
-
-    // extract pull-quotes; replace with markers so we can interleave
-    const lines = text.split('\n');
-    const bodyLines = [];
-    for (const line of lines) {
-      const qm = line.match(/^\s*>\s*["“]?(.+?)["”]?\s*[—–-]\s*(.+?)\s*$/);
-      if (qm) {
-        out.quotes.push({ text: qm[1].trim().replace(/^["“]|["”]$/g, ''), source: qm[2].trim() });
-        bodyLines.push(`@@QUOTE${out.quotes.length - 1}@@`);
+    if (!chosen) {
+      const { ranked } = matchThemes(question);
+      const best = ranked[0];
+      if (best && best.score >= 4) {
+        chosen = best.theme;
+        markActiveTheme(chosen.id);
       } else {
-        bodyLines.push(line);
+        // No strong match — show "closest themes" suggestion card
+        const suggestions = ranked.slice(0, 4).filter(r => r.score > 0).map(r => r.theme);
+        renderNoMatchCard(question, suggestions);
+        return;
       }
     }
-    out.body = bodyLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
-    return out;
+
+    renderThemeAnswer(question, chosen);
   }
 
-  // Render body with quote markers replaced by quote-block HTML
-  function renderBodyHtml(parsed) {
-    const paragraphs = parsed.body.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-    const html = paragraphs.map(p => {
-      const m = p.match(/^@@QUOTE(\d+)@@$/);
-      if (m) {
-        const q = parsed.quotes[Number(m[1])];
-        return renderQuoteBlock(q, Number(m[1]));
-      }
-      // also handle mid-paragraph markers (shouldn't happen but be safe)
-      const withQuotes = p.replace(/@@QUOTE(\d+)@@/g, (_, i) => {
-        const q = parsed.quotes[Number(i)];
-        return renderQuoteBlock(q, Number(i));
-      });
-      return `<p>${formatInline(withQuotes)}</p>`;
-    }).join('\n');
-    return html;
-  }
   function renderQuoteBlock(q, idx) {
     if (!q) return '';
     return `<div class="pull-quote" data-qi="${idx}">
@@ -287,84 +262,32 @@ Then a blank line, then the body, then the FOLLOW-UPS block. No other prefaces, 
       <button class="copyq" data-copyq="${idx}" aria-label="copy quote">${ICON_COPY}</button>
     </div>`;
   }
-  function formatInline(text) {
-    let s = escapeHtml(text);
-    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    s = s.replace(/(^|\W)\*(\S[^*]*?\S)\*(?=\W|$)/g, '$1<em>$2</em>');
-    return s;
-  }
 
-  // ---------- run a query
-  let queryId = 0;
-  async function runQuery(question, opts = {}) {
-    if (!question || !question.trim()) return;
-    question = question.trim();
-
-    if (opts.themeId) markActiveTheme(opts.themeId);
-    else markActiveTheme(null);
-
-    const id = ++queryId;
-    const loadingEl = renderLoading(question, id);
-    answersEl.prepend(loadingEl);
-
-    let raw, parsed, errMsg;
-    try {
-      raw = await window.claude.complete({
-        messages: [{ role: 'user', content: buildPrompt(question) }]
-      });
-    } catch (e) {
-      errMsg = e?.message || String(e);
-    }
-
-    // If a newer query arrived, abandon
-    if (id !== queryId) return;
-    loadingEl.remove();
-
-    if (errMsg) {
-      renderErrorCard(question, errMsg);
-      return;
-    }
-    parsed = parseAnswer(raw);
-    if (!parsed.headline && !parsed.body) {
-      renderErrorCard(question, 'No response returned.');
-      return;
-    }
-    renderAnswerCard(question, parsed, raw);
-  }
-
-  function renderLoading(question, id) {
-    const el = document.createElement('div');
-    el.className = 'loading-card';
-    el.dataset.qid = id;
-    el.innerHTML = `
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="label">Synthesising · <em>${escapeHtml(question.slice(0, 60) + (question.length > 60 ? '…' : ''))}</em></div>
-    `;
-    return el;
-  }
-
-  function renderErrorCard(question, errMsg) {
-    const el = document.createElement('div');
-    el.className = 'error-card';
-    el.innerHTML = `
-      <div class="label">Couldn't synthesise</div>
-      The synthesiser hit a snag — <em>${escapeHtml(errMsg)}</em>. Try again in a moment, or browse the curated themes on the left.
-    `;
-    answersEl.prepend(el);
-    setTimeout(() => el.remove(), 9000);
-  }
-
-  function renderAnswerCard(question, parsed, raw) {
+  function renderThemeAnswer(question, theme) {
     const card = document.createElement('article');
     card.className = 'answer-card';
-    const bodyHtml = renderBodyHtml(parsed);
+    const a = theme.answer;
+    const bodyHtml = a.body.map(item => {
+      if (item.p != null) return `<p>${escapeHtml(item.p)}</p>`;
+      if (item.q != null) {
+        const q = DATA.keyQuotes[item.q];
+        return renderQuoteBlock(q, item.q);
+      }
+      return '';
+    }).join('\n');
 
-    const followUpsHtml = parsed.followUps.length
+    const followUpsHtml = (a.followUps || []).length
       ? `<div class="followups">
            <div class="label">Follow-ups</div>
            <div class="row">
-             ${parsed.followUps.map(f => `<button class="fchip" data-q="${escapeHtml(f)}">${escapeHtml(f)}</button>`).join('')}
+             ${a.followUps.map(f => `<button class="fchip" data-q="${escapeHtml(f)}">${escapeHtml(f)}</button>`).join('')}
            </div>
+         </div>` : '';
+
+    const pcHtml = a.programmeContext
+      ? `<div class="programme-context">
+           <div class="pc-eyebrow"><span class="dot"></span>Wider AI LCC context</div>
+           <p>${escapeHtml(a.programmeContext)}</p>
          </div>` : '';
 
     card.innerHTML = `
@@ -375,14 +298,14 @@ Then a blank line, then the body, then the FOLLOW-UPS block. No other prefaces, 
           <button class="iconbtn" data-act="close" title="Dismiss">${ICON_CLOSE}</button>
         </div>
       </div>
-      ${parsed.headline ? `<h2 class="answer-headline">${escapeHtml(parsed.headline)}</h2>` : ''}
+      <h2 class="answer-headline">${escapeHtml(a.headline)}</h2>
       <div class="answer-body">${bodyHtml}</div>
+      ${pcHtml}
       ${followUpsHtml}
     `;
 
-    // wire copy on full answer
     card.querySelector('[data-act="copy"]').addEventListener('click', () => {
-      const txt = formatAnswerForCopy(question, parsed);
+      const txt = formatThemeAnswerForCopy(question, theme);
       copyText(txt);
       const b = card.querySelector('[data-act="copy"]');
       b.classList.add('copied'); b.innerHTML = ICON_CHECK;
@@ -399,7 +322,7 @@ Then a blank line, then the body, then the FOLLOW-UPS block. No other prefaces, 
       b.addEventListener('click', (e) => {
         e.stopPropagation();
         const i = Number(b.dataset.copyq);
-        const q = parsed.quotes[i];
+        const q = DATA.keyQuotes[i];
         if (!q) return;
         copyText(`"${q.text}" — ${q.source}`);
         b.classList.add('copied'); b.innerHTML = ICON_CHECK;
@@ -411,24 +334,65 @@ Then a blank line, then the body, then the FOLLOW-UPS block. No other prefaces, 
     requestAnimationFrame(() => card.classList.add('rising'));
   }
 
-  function formatAnswerForCopy(question, parsed) {
-    let s = `Q. ${question}\n\n`;
-    if (parsed.headline) s += parsed.headline + '\n\n';
-    // body with quote text substituted in
-    const para = parsed.body.replace(/@@QUOTE(\d+)@@/g, (_, i) => {
-      const q = parsed.quotes[Number(i)];
-      return q ? `\n> "${q.text}"\n— ${q.source}\n` : '';
-    });
-    s += para.trim() + '\n';
-    if (parsed.followUps.length) {
-      s += '\nFollow-ups:\n';
-      for (const f of parsed.followUps) s += `• ${f}\n`;
+  function formatThemeAnswerForCopy(question, theme) {
+    const a = theme.answer;
+    let s = `Q. ${question}\n\n${a.headline}\n\n`;
+    for (const item of a.body) {
+      if (item.p != null) s += item.p + '\n\n';
+      else if (item.q != null) {
+        const q = DATA.keyQuotes[item.q];
+        if (q) s += `> "${q.text}"\n  — ${q.source}\n\n`;
+      }
     }
-    s += '\n— LABLeads IdeaNET, field synthesis\n';
+    if (a.programmeContext) {
+      s += 'Wider AI LCC context:\n' + a.programmeContext + '\n\n';
+    }
+    if (a.followUps?.length) {
+      s += 'Follow-ups:\n';
+      for (const f of a.followUps) s += `• ${f}\n`;
+      s += '\n';
+    }
+    s += '— LABLeads IdeaNET, field synthesis\n';
     return s;
   }
 
-  // ---------- ask submit wiring
+  function renderNoMatchCard(question, suggestions) {
+    const card = document.createElement('article');
+    card.className = 'answer-card';
+    const chipsList = suggestions.length ? suggestions : DATA.themes.slice(0, 4);
+    const chipsHtml = chipsList.map(t => `<button class="fchip" data-theme="${t.id}">${escapeHtml(t.label)}</button>`).join('');
+
+    card.innerHTML = `
+      <div class="answer-head">
+        <div class="answer-q"><strong>Q.</strong> ${escapeHtml(question)}</div>
+        <div class="answer-actions">
+          <button class="iconbtn" data-act="close" title="Dismiss">${ICON_CLOSE}</button>
+        </div>
+      </div>
+      <h2 class="answer-headline">No strong match yet — here are the closest themes.</h2>
+      <div class="answer-body">
+        <p>This console synthesises answers from the actual conversations on file. Your question doesn't have a tight match in the corpus today, but one of these themes is probably near it — pick one to read the full synthesis, or rephrase the question.</p>
+      </div>
+      <div class="followups">
+        <div class="label">Try a theme</div>
+        <div class="row">${chipsHtml}</div>
+      </div>
+    `;
+    card.querySelector('[data-act="close"]').addEventListener('click', () => card.remove());
+    card.querySelectorAll('.fchip').forEach(c => {
+      c.addEventListener('click', () => {
+        const id = c.dataset.theme;
+        const t = DATA.themes.find(x => x.id === id);
+        if (!t) return;
+        qInput.value = t.query;
+        runQuery(t.query, { themeId: id });
+      });
+    });
+    answersEl.prepend(card);
+    requestAnimationFrame(() => card.classList.add('rising'));
+  }
+
+    // ---------- ask submit wiring
   qSubmit.addEventListener('click', () => runQuery(qInput.value));
   qInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); runQuery(qInput.value); }
