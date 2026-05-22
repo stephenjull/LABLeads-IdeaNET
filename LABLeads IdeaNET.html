@@ -110,6 +110,12 @@
   .pill:hover { color: var(--ink); border-color: var(--ink); }
   .pill svg { width: 12px; height: 12px; }
   .pill.icon { padding: 8px; }
+  @media (max-width: 980px) {
+    .hdr-meta .stat { display: none; }
+    .brand .stamp { display: none; }
+    .hdr-inner { padding: 10px 14px; gap: 10px; }
+    .brand .mark { font-size: 19px; }
+  }
   @media (max-width: 720px) {
     .hdr-meta .stat { display: none; }
     .brand .stamp { display: none; }
@@ -602,27 +608,116 @@
   .swatches button .row span { flex: 1; }
 
   /* ============ VIEW TOGGLE ============ */
+  .view-toggle-wrap {
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .view-toggle-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);
+    line-height: 1; padding-top: 1px;
+  }
   .view-toggle {
     display: inline-flex; align-items: stretch;
-    border: 1px solid var(--paper-rule); border-radius: 999px;
-    overflow: hidden;
-    background: var(--paper);
+    background: var(--paper-2);
+    border: 1px solid var(--ink-3);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: 0 1px 0 var(--paper-rule), 0 6px 14px -10px rgba(28,25,22,0.20);
+    position: relative;
+  }
+  .view-toggle.pulse {
+    animation: vt-glow 1.6s ease-in-out infinite;
+    border-color: var(--lead);
+  }
+  @keyframes vt-glow {
+    0%, 100% {
+      border-color: #b84a25;
+      box-shadow:
+        0 1px 0 var(--paper-rule),
+        0 6px 14px -10px rgba(28,25,22,0.20),
+        0 0 0 0 rgba(200,85,45,0.55),
+        0 0 0 0 rgba(200,85,45,0.25);
+    }
+    50% {
+      border-color: #e8703f;
+      box-shadow:
+        0 1px 0 var(--paper-rule),
+        0 6px 14px -10px rgba(28,25,22,0.20),
+        0 0 0 6px rgba(200,85,45,0.30),
+        0 0 0 14px rgba(200,85,45,0.10),
+        0 0 22px 2px rgba(200,85,45,0.45);
+    }
+  }
+  .view-toggle.pulse::before {
+    /* dot pulses faster + brighter while toggle is alive */
+    animation: vt-blink 1.1s ease-in-out infinite;
+    background: var(--lead);
+    box-shadow:
+      0 0 0 3px var(--paper),
+      0 0 0 5px rgba(200,85,45,0.35),
+      0 0 12px 2px rgba(200,85,45,0.55);
+  }
+  .view-toggle::before {
+    content: ""; position: absolute; left: -2px; top: -2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--lead);
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px rgba(200,85,45,0.20);
+    animation: vt-blink 2.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes vt-blink {
+    0%, 100% { opacity: 0.65; transform: scale(0.9); }
+    50%      { opacity: 1;    transform: scale(1.15); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .view-toggle.pulse,
+    .view-toggle.pulse::before { animation: none; }
   }
   .vt-btn {
     appearance: none; background: none; border: none; cursor: pointer;
-    padding: 7px 12px;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: color 160ms, background 160ms;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: 12.5px;
+    letter-spacing: 0.01em;
+    color: var(--ink-3);
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+    white-space: nowrap;
   }
   .vt-btn:hover { color: var(--ink); }
-  .vt-btn.on { background: var(--ink); color: var(--paper); }
-  .vt-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
-  @media (max-width: 640px) {
-    .vt-btn { padding: 7px 10px; }
-    .vt-btn svg { width: 13px; height: 13px; }
-    .vt-btn span, .vt-btn .lbl { display: none; }
+  .vt-btn.on {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 1px 2px rgba(28,25,22,0.18);
+  }
+  .vt-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  /* Hint label below — first visit only */
+  .view-toggle-hint {
+    position: absolute; top: calc(100% + 6px); right: 0;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 350;
+    font-size: 11.5px; color: var(--lead);
+    background: var(--paper); padding: 3px 8px;
+    border-radius: 999px; border: 1px solid var(--paper-rule);
+    white-space: nowrap;
+    animation: vt-hint-in 600ms cubic-bezier(.2,.7,.2,1) both;
+    pointer-events: none;
+  }
+  @keyframes vt-hint-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .view-toggle-hint.dismissed { display: none; }
+  .view-toggle-hint::before {
+    content: "↑"; margin-right: 4px; font-style: normal; color: var(--lead);
+  }
+  @media (max-width: 720px) {
+    .view-toggle-label { display: none; }
+    .vt-btn { padding: 8px 12px; font-size: 12px; }
+    .view-toggle-hint { font-size: 10.5px; }
+  }
+  @media (max-width: 460px) {
+    .vt-btn .lbl { display: none; }
+    .vt-btn { padding: 8px 10px; }
   }
 
   /* ============ VIZ STAGE ============ */
@@ -709,15 +804,19 @@
       <div class="hdr-meta">
         <div class="stat"><strong id="hStatSessions">3</strong>sessions · <strong id="hStatVoices">9</strong>voices · <strong id="hStatThemes">17</strong>themes</div>
 
-        <div class="view-toggle" id="viewToggle" role="tablist" aria-label="View">
-          <button class="vt-btn on" data-view="docs" role="tab" aria-selected="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
-            Documentation
-          </button>
-          <button class="vt-btn" data-view="viz" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.4"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)"/></svg>
-            Visualisation
-          </button>
+        <div class="view-toggle-wrap" style="position: relative;">
+          <span class="view-toggle-label">View</span>
+          <div class="view-toggle pulse" id="viewToggle" role="tablist" aria-label="View mode">
+            <button class="vt-btn on" data-view="docs" role="tab" aria-selected="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
+              <span class="lbl">Documentation</span>
+            </button>
+            <button class="vt-btn" data-view="viz" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.4"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)"/></svg>
+              <span class="lbl">Visualisation</span>
+            </button>
+          </div>
+          <div class="view-toggle-hint" id="viewToggleHint">Switch to the atomic visualisation</div>
         </div>
       </div>
     </div>
